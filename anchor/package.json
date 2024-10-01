@@ -1,0 +1,30 @@
+{
+  "name": "@casino-of-life-dashboard/anchor",
+  "version": "0.0.1",
+  "dependencies": {
+    "@coral-xyz/anchor": "^0.30.0",
+    "@solana/web3.js": "1.91.9"
+  },
+  "type": "module",
+  "main": "./index.cjs",
+  "module": "./index.js",
+  "private": true,
+  "devDependencies": {
+    "@types/chai": "^4.3.17",
+    "@types/jest": "^29.5.12",
+    "@types/mocha": "^10.0.7",
+    "@types/node": "^22.5.0",
+    "chai": "^5.1.1",
+    "mocha": "^10.7.3",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^4.9.5"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "test:betting-program": "ANCHOR_PROVIDER_URL='https://api.devnet.solana.com' ANCHOR_WALLET='/Users/caballoloko/.config/solana/new_program_keypair.json' nx test anchor --skip-build --skip-deploy",
+    "test:mocha": "node --loader ts-node/esm --experimental-specifier-resolution=node ../node_modules/.bin/mocha --timeout 30000 'tests/**/*.ts'"
+  }
+}

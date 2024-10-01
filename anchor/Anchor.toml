@@ -1,0 +1,29 @@
+[toolchain]
+anchor_version = "0.30.1"
+solana_version = "1.18.18"
+
+[features]
+resolution = true
+skip-lint = false
+
+[programs.devnet]
+betting_program = "F9NQzJLn37zS4MpvMUKWVpRHt4sZ3o5PAeienHhwEpNu"
+nft_game_agent_program = "5RDR7qVR11FepcUbbkfLLZKNWHPhJShfsRM75hgBR8rG"
+
+[registry]
+url = "https://api.apr.dev"
+
+[provider]
+cluster = "Devnet"
+wallet = "~/.config/solana/new_program_keypair.json"
+
+[workspace]
+members = ["programs/nft_game_agent_program", "programs/betting_program", "programs/award_agent_program"]
+
+[scripts]
+test = "npm run test:mocha"
+
+[test]
+startup_wait = 30000
+shutdown_wait = 5000
+upgradeable = true

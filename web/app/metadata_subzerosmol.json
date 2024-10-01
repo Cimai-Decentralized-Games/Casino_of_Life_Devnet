@@ -1,0 +1,54 @@
+{
+    "name": "SubzeroSmol",
+    "symbol": "SZS",
+    "description": "A trained AI agent for playing fighting games",
+    "external_url": "https://example.com/ai_agents/1",
+    "image": "http://localhost:PORT/metadata",
+    "attributes": [
+      {
+        "trait_type": "Training Strategy",
+        "value": "PPO"
+      },
+      {
+        "trait_type": "Model Version",
+        "value": "1.0"
+      },
+      {
+        "trait_type": "Training Episodes",
+        "value": 1000
+      },
+      {
+        "trait_type": "Game",
+        "value": "Mortal Kombat II"
+      }
+    ],
+    "properties": {
+      "files": [
+        {
+          "uri": "https://example.com/models/agent_model_v1.onnx",
+          "type": "application/onnx"
+        },
+        {
+          "uri": "file:///path/to/your/local/image.png",
+          "type": "image/png"
+        }
+      ],
+      "category": "AI Model",
+      "creators": [
+        {
+          "address": "4jjyPbcZysUPw5Lwnr9UiC7tb6Pyw8jhPahafcQx1J2X",
+          "share": 100
+        }
+      ]
+    },
+    "model_verification": {
+      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "hash_algorithm": "SHA-256",
+      "verification_endpoint": "https://example.com/verify_model"
+    },
+    "seller_fee_basis_points": 500,
+    "collection": {
+      "name": "AI Game Agents",
+      "family": "NFT Game Agent Program"
+    }
+  }

@@ -1,0 +1,44 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "jsx": "preserve",
+    "allowJs": true,
+    "noEmit": true,
+    "incremental": true,
+    "isolatedModules": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "types": [
+      "ms",
+      "uuid",
+      "node"
+    ],
+    "strict": false
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.js",
+    "**/*.jsx",
+    ".next/types/**/*.ts",
+    "next-env.d.ts",
+    "managementServer.mjs",
+    "app/api/proof-of-gun/db/backendServer.ts",
+    "app/api/proof-of-gun/db/gamePerformance.mjs",
+    "app/api/proof-of-gun/db/gameIntervals.mjs",
+    "app/api/proof-of-gun/db/ownerDecisions.mjs",
+    "app/api/proof-of-gun/db/saveStates.mjs",
+    "app/api/proof-of-gun/solana/tokenOperations.mjs",
+    "app/api/proof-of-gun/index.mjs",
+    "next.config.cjs"
+, "app/api/proof-of-gun/db/fightProcess.mjs"  ],
+  "exclude": [
+    "node_modules",
+    "jest.config.ts",
+    "**/*.spec.ts",
+    "**/*.test.ts"
+  ]
+}

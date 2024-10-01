@@ -1,0 +1,3 @@
+[submodule "docker-emulatorjs"]
+	path = docker-emulatorjs
+	url = https://github.com/Caballo-loko/Casino-of-Life.git

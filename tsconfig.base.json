@@ -1,0 +1,35 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "rootDir": ".",
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "target": "es2020",
+    "module": "commonjs",
+    "lib": ["es2020", "dom"],
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./web/*"],
+      "@casino-of-life-dashboard/anchor": ["anchor/src/index.ts"],
+      "@web/*": ["./web/*"],
+      "@components/*": ["./web/components/*"],
+      "@app/*": ["./web/app/*"]
+    },
+    "esModuleInterop": true,
+    "resolveJsonModule": true
+  },
+  "include": [
+    "web/**/*.ts",
+    "web/**/*.tsx",
+    "web/**/*.js",
+    "web/**/*.jsx",
+    "anchor/**/*.ts"
+  ],
+  "exclude": ["node_modules", "tmp"]
+}

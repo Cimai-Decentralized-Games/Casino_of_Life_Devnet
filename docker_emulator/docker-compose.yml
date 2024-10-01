@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  stable-retro:
+    build: .
+    volumes:
+      - ./roms:/app/roms
+      - ./models:/app/models
+      - ./logs:/app/logs
+      - ./save_states:/app/save_states
+      - ./hls:/app/hls
+    environment:
+      - PYTHONPATH=/app:/app/custom_scripts
+      - MODEL1=${MODEL1:-/app/models/LiuKang.pt}
+      - MODEL2=${MODEL2:-/app/models/LiuKang.pt}
+      - SAVE_STATE=${SAVE_STATE:-/app/stable-retro/retro/data/stable/MortalKombatII-Genesis/Level1.LiuKangVsJax.state}
+      - NUM_ROUNDS=${NUM_ROUNDS:-3}
+      - RENDER=${RENDER:-True}
+    ports:
+      - "80:80"
+      - "8765:8765"
+      - "6001:6001"  # Add this line to expose the backend server port
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    command: ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+    networks:
+      - game_network
+
+networks:
+  game_network:
+    driver: bridge

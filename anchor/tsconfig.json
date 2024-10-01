@@ -1,0 +1,22 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "target": "es2022",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "types": ["mocha", "chai", "node"],
+    "baseUrl": ".",
+    "paths": {
+      "*": ["node_modules/*", "../node_modules/*"]
+    }
+  },
+  "ts-node": {
+    "esm": true,
+    "experimentalSpecifierResolution": "node"
+  },
+  "include": ["src/**/*", "tests/**/*", "target/**/*"],
+  "exclude": ["node_modules"]
+}
