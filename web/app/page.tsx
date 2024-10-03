@@ -271,7 +271,7 @@ export default function Home() {
           <Link href="/betting-dashboard" className="btn btn-primary w-full">Casino</Link>
           <Link href="/game-agent" className="btn btn-primary w-full">Dashboard</Link>
           <Link href="/registry" className="btn btn-primary w-full sm:col-span-2 md:col-span-1">Registry</Link>
-          <Link href="/educhatbox" className="btn btn-primary w-full sm:col-span-2 md:col-span-1 md:col-start-2">RL Chat</Link>
+          <Link href="/educhatbox" className="btn btn-primary w-full sm:col-span-2 md:col-span-1 md:col-start-2">Chat</Link>
         </div>
       </Section>
     </div>

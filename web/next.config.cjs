@@ -56,6 +56,7 @@ const nextConfig = {
         assert: require.resolve('assert/'),
         os: require.resolve('os-browserify/browser'),
         path: require.resolve('path-browserify'),
+        'text-encoding': require.resolve('text-encoding'),
       };
     }
 

@@ -46,3 +46,4 @@ anchor/target/.rustc_info.json
 !anchor/target/types/*.ts
 test-ledger
 .yarndocker_emulator/libtorch-cxx11-abi-shared-with-deps-latest.zip
+.env.local

@@ -13,7 +13,7 @@ import { useTransactionToast } from '../ui/ui-layout';
 const TOKEN_METADATA_PROGRAM_ID = new PublicKey('metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s');
 
 
-const PROGRAM_ID = new PublicKey('ErQd82jnp2fgvj6h357Nj6gwpcyiNjFENP6cwQ9quaAW');
+const PROGRAM_ID = new PublicKey('5RDR7qVR11FepcUbbkfLLZKNWHPhJShfsRM75hgBR8rG');
 
 export function useNftGameAgentProgram() {
   const { connection } = useConnection();
@@ -72,7 +72,7 @@ export function useNftGameAgentProgram() {
             treasury: treasuryPda,
             authority: publicKey,
             systemProgram: SystemProgram.programId,
-          })
+          } as any)
           .instruction();
         tx.add(initTreasuryIx);
       }
