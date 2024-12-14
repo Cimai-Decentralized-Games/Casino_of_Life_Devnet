@@ -1,5 +1,5 @@
 {
-  "address": "F9NQzJLn37zS4MpvMUKWVpRHt4sZ3o5PAeienHhwEpNu",
+  "address": "5FwvYgAChMwMsBrmSKBBZeWRGX27p62G3o3UsBQjhVJZ",
   "metadata": {
     "name": "betting_program",
     "version": "0.1.0",
@@ -116,6 +116,30 @@
           }
         },
         {
+          "name": "bet",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  101,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "user"
+              },
+              {
+                "kind": "arg",
+                "path": "fight_id"
+              }
+            ]
+          }
+        },
+        {
           "name": "sol_vault",
           "writable": true,
           "pda": {
@@ -214,6 +238,32 @@
         {
           "name": "system_program",
           "address": "11111111111111111111111111111111"
+        },
+        {
+          "name": "bet_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  101,
+                  116,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "betting_state"
+              }
+            ]
+          }
         }
       ],
       "args": [
@@ -1313,7 +1363,10 @@
         {
           "name": "authority",
           "writable": true,
-          "signer": true
+          "signer": true,
+          "relations": [
+            "betting_state"
+          ]
         },
         {
           "name": "bet_vault",
@@ -1333,6 +1386,10 @@
                   108,
                   116
                 ]
+              },
+              {
+                "kind": "account",
+                "path": "betting_state"
               }
             ]
           }
@@ -1553,6 +1610,123 @@
         {
           "name": "system_program",
           "address": "11111111111111111111111111111111"
+        },
+        {
+          "name": "dumbs_treasury",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  117,
+                  109,
+                  98,
+                  115,
+                  95,
+                  116,
+                  114,
+                  101,
+                  97,
+                  115,
+                  117,
+                  114,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "treasury_dumbs_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "dumbs_treasury"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "dumbs_mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
         }
       ],
       "args": [
@@ -2001,6 +2175,11 @@
       "code": 6015,
       "name": "InvalidAccount",
       "msg": "Invalid account"
+    },
+    {
+      "code": 6016,
+      "name": "BetNotSettled",
+      "msg": "Bet not settled"
     }
   ],
   "types": [

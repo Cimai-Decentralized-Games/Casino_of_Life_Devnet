@@ -5,7 +5,7 @@
  * IDL can be found at `target/idl/betting_program.json`.
  */
 export type BettingProgram = {
-  "address": "F9NQzJLn37zS4MpvMUKWVpRHt4sZ3o5PAeienHhwEpNu",
+  "address": "5FwvYgAChMwMsBrmSKBBZeWRGX27p62G3o3UsBQjhVJZ",
   "metadata": {
     "name": "bettingProgram",
     "version": "0.1.0",
@@ -122,6 +122,30 @@ export type BettingProgram = {
           }
         },
         {
+          "name": "bet",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  101,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "user"
+              },
+              {
+                "kind": "arg",
+                "path": "fightId"
+              }
+            ]
+          }
+        },
+        {
           "name": "solVault",
           "writable": true,
           "pda": {
@@ -220,6 +244,32 @@ export type BettingProgram = {
         {
           "name": "systemProgram",
           "address": "11111111111111111111111111111111"
+        },
+        {
+          "name": "betVault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  101,
+                  116,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "bettingState"
+              }
+            ]
+          }
         }
       ],
       "args": [
@@ -1319,7 +1369,10 @@ export type BettingProgram = {
         {
           "name": "authority",
           "writable": true,
-          "signer": true
+          "signer": true,
+          "relations": [
+            "bettingState"
+          ]
         },
         {
           "name": "betVault",
@@ -1339,6 +1392,10 @@ export type BettingProgram = {
                   108,
                   116
                 ]
+              },
+              {
+                "kind": "account",
+                "path": "bettingState"
               }
             ]
           }
@@ -1559,6 +1616,123 @@ export type BettingProgram = {
         {
           "name": "systemProgram",
           "address": "11111111111111111111111111111111"
+        },
+        {
+          "name": "dumbsTreasury",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  117,
+                  109,
+                  98,
+                  115,
+                  95,
+                  116,
+                  114,
+                  101,
+                  97,
+                  115,
+                  117,
+                  114,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "treasuryDumbsAccount",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "dumbsTreasury"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "dumbsMint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
         }
       ],
       "args": [
@@ -2007,6 +2181,11 @@ export type BettingProgram = {
       "code": 6015,
       "name": "invalidAccount",
       "msg": "Invalid account"
+    },
+    {
+      "code": 6016,
+      "name": "betNotSettled",
+      "msg": "Bet not settled"
     }
   ],
   "types": [

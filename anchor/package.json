@@ -3,7 +3,8 @@
   "version": "0.0.1",
   "dependencies": {
     "@coral-xyz/anchor": "^0.30.0",
-    "@solana/web3.js": "1.91.9"
+    "@solana/web3.js": "1.91.9",
+    "text-encoding": "^0.7.0"
   },
   "type": "module",
   "main": "./index.cjs",
@@ -24,7 +25,9 @@
     "node": ">=18.0.0"
   },
   "scripts": {
+    "build": "tsc -p tsconfig.json",
     "test:betting-program": "ANCHOR_PROVIDER_URL='https://api.devnet.solana.com' ANCHOR_WALLET='/Users/caballoloko/.config/solana/new_program_keypair.json' nx test anchor --skip-build --skip-deploy",
-    "test:mocha": "node --loader ts-node/esm --experimental-specifier-resolution=node ../node_modules/.bin/mocha --timeout 30000 'tests/**/*.ts'"
+    "test:mocha": "node --loader ts-node/esm --experimental-specifier-resolution=node ../node_modules/.bin/mocha --timeout 30000 'tests/**/*.ts'",
+    "anchor-build": "nx run anchor:full-build"
   }
 }

@@ -1,3 +1,0 @@
-export const LAMPORTS_PER_SOL = 1000000000;
-export const COLLECTION_FEE = 10000000; // 0.01 SOL
-export const AGENT_FEE = 20000000; // 0.02 SOL

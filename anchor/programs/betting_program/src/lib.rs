@@ -12,7 +12,7 @@ pub mod state;
 
 use instructions::*;
 
-declare_id!("F9NQzJLn37zS4MpvMUKWVpRHt4sZ3o5PAeienHhwEpNu");
+declare_id!("5FwvYgAChMwMsBrmSKBBZeWRGX27p62G3o3UsBQjhVJZ");
 
 #[program]
 pub mod betting_program {

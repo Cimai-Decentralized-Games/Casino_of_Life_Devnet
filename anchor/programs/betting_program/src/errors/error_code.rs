@@ -34,4 +34,6 @@ pub enum ErrorCode {
     CalculationOverflow,
     #[msg("Invalid account")]
     InvalidAccount,
+    #[msg("Bet not settled")]
+    BetNotSettled,
 }

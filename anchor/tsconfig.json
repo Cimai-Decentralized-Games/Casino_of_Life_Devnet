@@ -9,14 +9,22 @@
     "strict": true,
     "types": ["mocha", "chai", "node"],
     "baseUrl": ".",
+    "rootDir": ".",
+    "outDir": "dist",
+    "declaration": true,
     "paths": {
-      "*": ["node_modules/*", "../node_modules/*"]
+      "*": ["*", "target/*"],
+      "@casino-of-life-dashboard/anchor": ["src"]
     }
   },
   "ts-node": {
     "esm": true,
     "experimentalSpecifierResolution": "node"
   },
-  "include": ["src/**/*", "tests/**/*", "target/**/*"],
-  "exclude": ["node_modules"]
+  "include": [
+    "src/**/*", 
+    "tests/**/*", 
+    "target/**/*"
+  ],
+  "exclude": ["node_modules", "dist"]
 }

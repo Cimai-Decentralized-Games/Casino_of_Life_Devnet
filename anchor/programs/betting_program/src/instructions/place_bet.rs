@@ -82,18 +82,29 @@ pub fn handler(ctx: Context<PlaceBet>, amount: u64, fight_id: u64, odds: u64) ->
         return Err(ErrorCode::InsufficientFunds.into());
     }
 
-    // Calculate and deduct house fee
+    // Calculate and deduct house fee (in DUMBS)
     let fee = amount.checked_mul(betting_state.house_fee).unwrap() / 10000;
     let bet_amount = amount.checked_sub(fee).unwrap();
 
     // Transfer DUMBS tokens from user to bet vault
+    let betting_state_bump = ctx.bumps.betting_state;
+    let betting_state_seeds = &[
+        b"betting_state".as_ref(),
+        &[betting_state_bump],
+    ];
+    let betting_state_signer = &[&betting_state_seeds[..]];
+
     let cpi_accounts = Transfer {
         from: ctx.accounts.user_dumbs_account.to_account_info(),
         to: bet_vault.to_account_info(),
         authority: ctx.accounts.bettor.to_account_info(),
     };
     let cpi_program = ctx.accounts.token_program.to_account_info();
-    let cpi_ctx = CpiContext::new(cpi_program.clone(), cpi_accounts);
+    let cpi_ctx = CpiContext::new_with_signer(
+        cpi_program.clone(), 
+        cpi_accounts,
+        betting_state_signer
+    );
     token::transfer(cpi_ctx, bet_amount)?;
 
     // Transfer fee to DUMBS treasury account
@@ -102,7 +113,11 @@ pub fn handler(ctx: Context<PlaceBet>, amount: u64, fight_id: u64, odds: u64) ->
         to: ctx.accounts.dumbs_treasury_account.to_account_info(),
         authority: ctx.accounts.bettor.to_account_info(),
     };
-    let fee_cpi_ctx = CpiContext::new(cpi_program, fee_transfer);
+    let fee_cpi_ctx = CpiContext::new_with_signer(
+        cpi_program, 
+        fee_transfer,
+        betting_state_signer
+    );
     token::transfer(fee_cpi_ctx, fee)?;
 
     // Update the treasury records
@@ -123,8 +138,12 @@ pub fn handler(ctx: Context<PlaceBet>, amount: u64, fight_id: u64, odds: u64) ->
 
     // Update betting state
     let potential_payout = bet_amount.checked_mul(odds).unwrap() / 100;
-    betting_state.total_potential_payout = betting_state.total_potential_payout.checked_add(potential_payout).unwrap();
-    betting_state.total_dumbs_in_circulation = betting_state.total_dumbs_in_circulation.checked_add(bet_amount).unwrap();
+    betting_state.total_potential_payout = betting_state.total_potential_payout
+        .checked_add(potential_payout)
+        .ok_or(ErrorCode::CalculationOverflow)?;
+    betting_state.total_dumbs_in_circulation = betting_state.total_dumbs_in_circulation
+        .checked_add(bet_amount)
+        .ok_or(ErrorCode::CalculationOverflow)?;
 
     Ok(())
 }

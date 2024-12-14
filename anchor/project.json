@@ -12,7 +12,13 @@
         "outputPath": "dist/anchor",
         "main": "anchor/src/index.ts",
         "tsConfig": "anchor/tsconfig.lib.json",
-        "assets": [],
+        "assets": [
+          {
+            "glob": "target/idl/*.json",
+            "input": "anchor",
+            "output": "."
+          }
+        ],
         "project": "anchor/package.json",
         "compiler": "swc",
         "format": ["cjs", "esm"]
@@ -50,6 +56,16 @@
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
         "jestConfig": "anchor/jest.config.ts"
+      }
+    },
+    "full-build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "nx run anchor:anchor build",
+          "nx run anchor:build"
+        ],
+        "parallel": false
       }
     }
   }
