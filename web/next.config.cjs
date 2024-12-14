@@ -1,5 +1,6 @@
 //@ts-check
 const path = require('path');
+const webpack = require('webpack');
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { composePlugins, withNx } = require('@nx/next');
@@ -8,14 +9,40 @@ const { composePlugins, withNx } = require('@nx/next');
  * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
  **/
 const nextConfig = {
-  webpack: (config, { isServer }) => {
+  // Remove the 'output: 'export'' line to allow for server-side rendering
+  distDir: 'dist/web',
+  webpack: (config, { isServer, dev }) => {
+    console.log(`Webpack build: isServer: ${isServer}, dev: ${dev}`);
+    
+    // Add webpack plugin to handle text-encoding
+    config.plugins.push(
+      new webpack.NormalModuleReplacementPlugin(
+        /\/lib\/text-encoding$/,
+        require.resolve('fast-text-encoding')
+      )
+    );
+
     // Ignore warnings from Gun.js
     config.ignoreWarnings = [
       ...(config.ignoreWarnings || []),
       { module: /node_modules\/gun/ },
     ];
     
-    config.externals = [...(config.externals || []), 'bigint', 'node-gyp-build'];
+    // Add all required externals
+    config.externals = [
+      ...(config.externals || []),
+      'bigint',
+      'node-gyp-build',
+      'encoding',
+      'text-encoding'
+    ];
+
+    // Configure aliases for text-encoding and other modules
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      '@': path.join(__dirname, '.'),
+      '@casino-of-life-dashboard/anchor': path.join(__dirname, '..', 'anchor')
+    };
 
     // This allows you to use both CommonJS and ES modules
     config.module.rules.push({
@@ -26,12 +53,6 @@ const nextConfig = {
         fullySpecified: false,
       },
     });
-
-    // Add alias for @ to point to the web directory
-    config.resolve.alias['@'] = path.join(__dirname, '.');
-
-    // Add alias for the anchor project
-    config.resolve.alias['@casino-of-life-dashboard/anchor'] = path.join(__dirname, '..', 'anchor');
 
     // Enhance module resolution
     config.resolve.modules = [
@@ -56,7 +77,12 @@ const nextConfig = {
         assert: require.resolve('assert/'),
         os: require.resolve('os-browserify/browser'),
         path: require.resolve('path-browserify'),
-        'text-encoding': require.resolve('text-encoding'),
+        '@mapbox/node-pre-gyp': false,
+        'mock-aws-s3': false,
+        nock: false,
+        child_process: false,
+        module: false,
+        encoding: false
       };
     }
 
@@ -71,7 +97,23 @@ const nextConfig = {
   experimental: {
     esmExternals: 'loose',
   },
+  // Add this new section for headers
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          {
+            key: 'Content-Security-Policy',
+            value: "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src 'self' https:; connect-src 'self' https:; img-src 'self' data: https:;"
+          },
+        ],
+      },
+    ];
+  },
 };
+
+console.log('Next.js config loaded:', nextConfig);
 
 const plugins = [
   // Add more Next.js plugins to this list if needed.

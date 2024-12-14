@@ -24,8 +24,8 @@ const EduChatBox: React.FC = () => {
 
     try {
       setIsLoading(true);
-      const response = await axios.post('/api/chatgpt', { message: input });
-      const botMessage = { sender: 'gpt' as const, text: response.data.text };
+      const response = await axios.post('/api/educhatbox', { message: input });
+      const botMessage = { sender: 'gpt' as const, text: response.data.reply }; // Changed from response.data.text to response.data.reply
       setMessages((prevMessages) => [...prevMessages, botMessage]);
     } catch (error) {
       console.error('Error fetching GPT response:', error);

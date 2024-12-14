@@ -1,94 +1,143 @@
 'use client';
 
-import React, { useState, useCallback } from 'react';
+import React from 'react';
+import { useGameAgentState } from './game-agent-state';
 import { useNftGameAgentProgram } from './game-agent-data-access';
-import { GameAgentUI, Collection } from './game-agent-ui';
-import { PublicKey } from '@solana/web3.js';
+import { GameAgentUI } from './game-agent-ui';
+import { toast } from 'react-hot-toast';
 import { COLLECTION_FEE, AGENT_FEE, LAMPORTS_PER_SOL } from '../../app/utils/constants';
+import { PublicKey } from '@solana/web3.js';
+import type { MintingStep } from './game-agent-state';
+import type { ModelData } from '../../utils/modelValidation';
 
-type Agent = {
-  publicKey: PublicKey;
-  account: {
-    name: string;
-    symbol: string;
-    uri: string;
-    modelHash: number[];
-    collection: PublicKey;
-    errorMessage: string | null;
-  };
-};
+interface GameAgentFeatureProps {
+  initialModelData?: ModelData;
+}
 
-export function GameAgentFeature() {
-  const [selectedCollection, setSelectedCollection] = useState<PublicKey | null>(null);
+export function GameAgentFeature({ initialModelData }: GameAgentFeatureProps) {
+  const {
+    currentStep,
+    isStepComplete,
+    modelData,
+    uploadedModel,
+    uploadedImage,
+    isModelValidated,
+    validatedModelId,
+    generatedUri,
+    generatedModelHash,
+    selectedCollection,
+    setCurrentStep,
+    setIsStepComplete,
+    setUploadedImage,
+    setSelectedCollection,
+    handleModelDataChange,
+    handleModelDataSubmit,
+    handleUploadModel,
+    handleValidateModel,
+    handleGenerateUri
+  } = useGameAgentState();
 
   const {
     collections,
     createCollection,
     agents,
     mintAgent,
-    program,
   } = useNftGameAgentProgram();
 
-  const mappedCollections = collections.data?.map(c => ({
-    publicKey: c.publicKey,
-    account: {
-      name: String.fromCharCode(...c.account.name),
-      symbol: String.fromCharCode(...c.account.symbol),
-      strategy: String.fromCharCode(...c.account.strategy),
-      authority: c.account.authority
+  const handleCreateCollection = async (input: { name: string; symbol: string; strategy: string }) => {
+    try {
+      await createCollection.mutateAsync(input);
+      toast.success('Collection created successfully');
+    } catch (error) {
+      toast.error(`Failed to create collection: ${(error as Error).message}`);
     }
-  })) as Collection[] | undefined;
+  };
 
-  const mappedAgents = agents.data?.map(a => ({
-    publicKey: a.publicKey,
-    account: {
-      name: String.fromCharCode(...a.account.name),
-      symbol: String.fromCharCode(...a.account.symbol),
-      uri: a.account.uri,
-      modelHash: a.account.modelHash,
-      collection: a.account.collection,
-      errorMessage: a.account.errorMessage
-    }
-  })) as Agent[] | undefined;
-
-  const handleCreateCollection = useCallback((input: { name: string; symbol: string; strategy: string }) => {
-    createCollection.mutate(input, {
-      onSuccess: () => console.log('Collection created successfully'),
-      onError: (error) => console.error('Error creating collection:', error)
-    });
-  }, [createCollection]);
-
-  const handleMintAgent = useCallback(async (input: { name: string; symbol: string; uri: string; modelHash: number[] }) => {
-    if (selectedCollection && program) {
-      try {
-        await mintAgent.mutateAsync({ ...input, collectionId: selectedCollection });
-        console.log('Agent minted successfully');
-      } catch (error) {
-        console.error('Error minting agent:', error);
+  const handleCollectionSelect = (collectionId: string) => {
+    try {
+      const collection = collections.data?.find(
+        c => c.publicKey.toString() === collectionId
+      );
+      
+      if (!collection) {
+        toast.error('Selected collection not found');
+        return;
       }
-    } else {
-      console.error('No collection selected or program not available');
+
+      setSelectedCollection(collection.account.collectionId);
+      setIsStepComplete((prev: Record<MintingStep, boolean>) => ({ ...prev, collection: true }));
+      setCurrentStep('mint' as MintingStep);
+    } catch (error) {
+      toast.error('Invalid collection selection');
     }
-  }, [selectedCollection, program, mintAgent]);
+  };
+
+  const handleMetadataSubmit = async (updatedModelData: ModelData) => {
+    try {
+      const result = await handleGenerateUri();
+      if (result) {
+        setIsStepComplete((prev: Record<MintingStep, boolean>) => ({ ...prev, metadata: true }));
+        setCurrentStep('collection' as MintingStep);
+      }
+    } catch (error) {
+      toast.error(`Failed to generate metadata: ${(error as Error).message}`);
+    }
+  };
+
+  const handleMintAgent = async (agentName: string, agentSymbol: string) => {
+    if (!selectedCollection || !generatedUri || !generatedModelHash) {
+      toast.error('Missing required data for minting');
+      return;
+    }
+
+    try {
+      await mintAgent.mutateAsync({
+        name: agentName,
+        symbol: agentSymbol,
+        uri: generatedUri,
+        modelHash: generatedModelHash,
+        collectionId: selectedCollection
+      });
+      toast.success('Agent minted successfully');
+      setIsStepComplete((prev: Record<MintingStep, boolean>) => ({ ...prev, mint: true }));
+    } catch (error) {
+      toast.error(`Failed to mint agent: ${(error as Error).message}`);
+    }
+  };
 
   return (
     <GameAgentUI
-      collections={mappedCollections}
-      agents={mappedAgents}
+      currentStep={currentStep}
+      isStepComplete={isStepComplete}
+      collections={collections.data || []}
+      agents={agents.data || []}
       isLoadingCollections={collections.isLoading}
       isLoadingAgents={agents.isLoading}
       isCreatingCollection={createCollection.isPending}
       isMintingAgent={mintAgent.isPending}
       onCreateCollection={handleCreateCollection}
       onMintAgent={handleMintAgent}
-      onSelectCollection={setSelectedCollection}
+      onSelectCollection={handleCollectionSelect}
       selectedCollection={selectedCollection}
-      collectionsError={collections.error}
-      agentsError={agents.error}
-      createCollectionError={createCollection.error}
-      mintAgentError={mintAgent.error}
+      collectionsError={collections.error as Error}
+      agentsError={agents.error as Error}
+      createCollectionError={createCollection.error as Error}
+      mintAgentError={mintAgent.error as Error}
       collectionFee={COLLECTION_FEE / LAMPORTS_PER_SOL}
       agentFee={AGENT_FEE / LAMPORTS_PER_SOL}
+      modelData={modelData}
+      uploadedModel={uploadedModel}
+      uploadedImage={uploadedImage}
+      onModelDataChange={handleModelDataChange}
+      onModelDataSubmit={handleModelDataSubmit}
+      onImageUpload={setUploadedImage}
+      onUploadModel={handleUploadModel}
+      onValidateModel={handleValidateModel}
+      onMetadataSubmit={handleMetadataSubmit}
+      onGenerateUri={handleGenerateUri}
+      generatedUri={generatedUri}
+      generatedModelHash={generatedModelHash}
+      isModelValidated={isModelValidated}
     />
   );
 }

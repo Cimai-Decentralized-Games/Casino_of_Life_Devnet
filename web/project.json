@@ -38,10 +38,11 @@
         }
       }
     },
-    "export": {
-      "executor": "@nx/next:export",
+    "start": {
+      "executor": "@nx/next:server",
       "options": {
-        "buildTarget": "web:build:production"
+        "buildTarget": "web:build:production",
+        "dev": false
       }
     },
     "lint": {

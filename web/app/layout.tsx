@@ -16,6 +16,7 @@ const links: { label: string; path: string }[] = [
   { label: 'Dashboard', path: '/game-agent' },
   { label: 'Registry', path: '/registry'},
   { label: 'Chat', path: '/educhatbox'},
+  { label: 'Tournament', path: '/tournament'},
 ];
 
 export default function RootLayout({

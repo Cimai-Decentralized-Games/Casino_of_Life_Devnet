@@ -14,9 +14,12 @@
     "types": [
       "ms",
       "uuid",
-      "node"
+      "node",
+      "fast-text-encoding",
+      "@types/fast-text-encoding"
     ],
-    "strict": false
+    "strict": false,
+    "skipLibCheck": true
   },
   "include": [
     "**/*.ts",
@@ -25,16 +28,15 @@
     "**/*.jsx",
     ".next/types/**/*.ts",
     "next-env.d.ts",
-    "managementServer.mjs",
-    "app/api/proof-of-gun/db/backendServer.ts",
-    "app/api/proof-of-gun/db/gamePerformance.mjs",
+    "gun.d.ts",
+    "app/api/proof-of-gun/db/modelPerformance.mjs",
     "app/api/proof-of-gun/db/gameIntervals.mjs",
     "app/api/proof-of-gun/db/ownerDecisions.mjs",
     "app/api/proof-of-gun/db/saveStates.mjs",
     "app/api/proof-of-gun/solana/tokenOperations.mjs",
-    "app/api/proof-of-gun/index.mjs",
-    "next.config.cjs"
-, "app/api/proof-of-gun/db/fightProcess.mjs"  ],
+    "next.config.cjs",
+    "app/api/fight-process/route.ts"
+  ],
   "exclude": [
     "node_modules",
     "jest.config.ts",

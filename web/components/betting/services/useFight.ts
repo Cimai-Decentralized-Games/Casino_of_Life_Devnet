@@ -1,8 +1,7 @@
 // useFight.ts
 import { useReducer, useCallback, useRef, useEffect } from 'react';
 import { fightReducer, FightState, FightAction } from './fightReducer';
-import { useSolana } from './useSolana'; // Import the Solana function
-
+import { useSolana } from './useSolana';
 
 const initialState: FightState = {
   status: 'no_fight',
@@ -10,12 +9,14 @@ const initialState: FightState = {
   activeFightSecureId: null,
   bets: {
     player1: 0,
-    player2: 0
+    player2: 0,
+    maxBet: 0,
+    minBet: 0
   },
   currentState: {
     round: 0,
-    p1_health: 100,
-    p2_health: 100,
+    p1_health: 120,
+    p2_health: 120,
     timestamp: 0
   },
   streamUrl: null,
@@ -25,9 +26,7 @@ const initialState: FightState = {
 export const useFight = () => {
   const [state, dispatch] = useReducer(fightReducer, initialState);
   const isInitializingFightRef = useRef(false);
-  const lastFetchedDataRef = useRef<any>(null);
-  const { placeSolanaBet } = useSolana();
-  
+  const { placeSolanaBet, handleCashOut: handleSolanaCashOut } = useSolana();
 
   const initializeFightForBetting = useCallback(async () => {
     if (isInitializingFightRef.current) {
@@ -38,21 +37,28 @@ export const useFight = () => {
     isInitializingFightRef.current = true;
 
     try {
-      const response = await fetch('/api/fight/initialize-betting', { method: 'POST' });
+      const response = await fetch('/api/fight-process', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'initializeFight'
+        })
+      });
+
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
 
-      if (data.fight && data.fight.id) {
+      if (data.fight) {
         dispatch({ 
           type: 'INITIALIZE_FIGHT', 
           payload: { 
-            fightId: data.fight.id, 
+            fightId: data.fight.fightid,
             secureId: data.fight.secureId,
-            status: 'betting_open'
+            status: data.fight.status,
+            maxBet: 1000000, // 1M DUMBS
+            minBet: 10 // 10 DUMBS
           } 
         });
-      } else {
-        throw new Error('Invalid fight data returned from API');
       }
     } catch (error) {
       console.error('Error initializing fight for betting:', error);
@@ -67,21 +73,82 @@ export const useFight = () => {
     }
   }, []);
 
+  const fetchAndUpdateFightStatus = useCallback(async () => {
+    if (state.activeFightId) {
+      try {
+        console.log('Fetching update for fight:', state.activeFightId);
+        
+        const response = await fetch('/api/fight-process', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'updateState',
+            fightId: state.activeFightId
+          })
+        });
+
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        const data = await response.json();
+        
+        if (data.fight) {
+          console.log('Fight update received:', data.fight);
+          
+          const shouldContinuePolling = 
+            data.fight.status !== 'completed' || 
+            (data.fight.status === 'completed' && !data.fight.winner);
+
+          dispatch({ 
+            type: 'UPDATE_FIGHT_STATUS', 
+            payload: data.fight 
+          });
+
+          if (data.fight.status === 'completed' && data.fight.winner) {
+            console.log('Fight completed with winner:', data.fight.winner);
+            // Any end-of-fight cleanup here
+          }
+
+          return shouldContinuePolling;
+        }
+      } catch (error) {
+        console.error('Error in fetchAndUpdateFightStatus:', error);
+        return false;
+      }
+    }
+    return false;
+  }, [state.activeFightId]);
+
   const placeBet = useCallback(async (player: 'player1' | 'player2', amount: number) => {
-    if (!state.activeFightId) {
+    if (!state.activeFightId || !state.activeFightSecureId) {
       console.error('No active fight to place bet for');
+      return;
+    }
+
+    // Add bet amount validation
+    if (amount < state.bets.minBet || amount > state.bets.maxBet) {
+      console.error('Bet amount outside allowed range');
+      alert(`Bet amount must be between ${state.bets.minBet} and ${state.bets.maxBet} DUMBS`);
       return;
     }
 
     try {
       // First, call the Solana function to handle the blockchain transaction
-      await placeSolanaBet(state.activeFightId, player, amount);
+      await placeSolanaBet(
+        state.activeFightId, 
+        player, 
+        amount,
+        state.activeFightSecureId  // Add the secure ID here
+      );
 
       // If the Solana transaction is successful, proceed with the API call
-      const response = await fetch('/api/betting/place-bet', {
+      const response = await fetch('/api/fight-process', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ fightId: state.activeFightId, player, amount }),
+        body: JSON.stringify({ 
+          action: 'placeBet',
+          fightId: state.activeFightId, 
+          player, 
+          amount 
+        }),
       });
 
       if (!response.ok) {
@@ -90,11 +157,10 @@ export const useFight = () => {
       }
 
       const data = await response.json();
-      dispatch({ type: 'UPDATE_BETS', payload: { player, amount: data.newBetAmount } });
+      dispatch({ type: 'UPDATE_BETS', payload: { player, amount: data.amount } });
 
       // Fetch the updated fight status after placing the bet
       await fetchAndUpdateFightStatus();
-
     } catch (error) {
       console.error('Error in placeBet:', error);
       if (error instanceof Error) {
@@ -103,19 +169,25 @@ export const useFight = () => {
         alert('Failed to place bet. Unknown error occurred.');
       }
     }
-  }, [state.activeFightId, placeSolanaBet ]);
+  }, [state.activeFightId, state.activeFightSecureId, placeSolanaBet, fetchAndUpdateFightStatus]);
 
   const startFightAfterBetting = useCallback(async () => {
     if (!state.activeFightId || !state.activeFightSecureId) {
-      console.error('No active fight to start');
+      console.error('No active fight to start', state);
       return;
     }
 
+    console.log('Starting fight after betting');
+    
     try {
-      const response = await fetch('/api/fight/start-after-betting', {
+      const response = await fetch('/api/fight-process', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ fightId: state.activeFightId, secureId: state.activeFightSecureId }),
+        body: JSON.stringify({ 
+          action: 'startFight',
+          fightId: state.activeFightId, 
+          secureId: state.activeFightSecureId 
+        })
       });
 
       if (!response.ok) {
@@ -123,60 +195,86 @@ export const useFight = () => {
       }
 
       const data = await response.json();
-      const streamUrl = `http://localhost/hls/stream.m3u8?fightId=${state.activeFightId}`;
+      console.log('Start fight response:', data);
+      
+      // Generate stream URL directly from fightId
+      const streamUrl = `https://stream.cimai.biz/hls/${state.activeFightId}/output.m3u8`;
       
       dispatch({ 
         type: 'START_FIGHT', 
         payload: { 
-          status: 'active', 
-          streamUrl: streamUrl,
+          status: 'in_progress',
+          streamUrl: streamUrl 
         } 
       });
 
-      console.log('Fight started, streamUrl set to:', streamUrl);
-
     } catch (error) {
-      console.error('Error in startFightAfterBetting:', error);
-      dispatch({ type: 'ERROR', payload: 'Error occurred while starting the fight' });
+      console.error('Error starting fight:', error);
+      dispatch({
+        type: 'UPDATE_FIGHT_STATUS',
+        payload: { status: 'betting_open' }
+      });
+      alert(error instanceof Error ? error.message : 'Failed to start fight');
     }
-  }, [state.activeFightId, state.activeFightSecureId ]);
+  }, [state.activeFightId, state.activeFightSecureId]);
 
-  const fetchAndUpdateFightStatus = useCallback(async () => {
-    if (state.activeFightId) {
-      try {
-        console.log('Fetching fight status for fight:', state.activeFightId);
-        const response = await fetch(`/api/fight/update?fightId=${state.activeFightId}`, {
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json' },
-        });
-  
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-  
-        const data = await response.json();
-        console.log('Received fight data:', data);
-        
-        if (JSON.stringify(data) !== JSON.stringify(lastFetchedDataRef.current)) {
-          console.log('Updating fight state with new data');
-          lastFetchedDataRef.current = data;
-          dispatch({ type: 'UPDATE_FIGHT_STATUS', payload: data });
-        } else {
-          console.log('No changes in fight data');
-        }
-      } catch (error) {
-        console.error('Error in fetchAndUpdateFightStatus:', error);
-        // Handle the error appropriately, maybe set an error state
-        // dispatch({ type: 'SET_ERROR', payload: error.message });
+  const handleCashOut = useCallback(async (secureId: string) => {
+    if (!state.activeFightSecureId) {
+      console.error('No active fight for cashout');
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/fight-process', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'cashOut',
+          secureId: state.activeFightSecureId,
+        })
+      });
+
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      const data = await response.json();
+
+      if (data.success) {
+        await handleSolanaCashOut(state.activeFightSecureId, state);
+      }
+    } catch (error) {
+      console.error('Error in handleCashOut:', error);
+      if (error instanceof Error) {
+        alert(`Failed to cash out. Error: ${error.message}`);
+      } else {
+        alert('Failed to cash out. Unknown error occurred.');
       }
     }
-  }, [state.activeFightId, dispatch]);
+  }, [state, handleSolanaCashOut]);
 
   useEffect(() => {
-    if (state.status !== 'no_fight') {
-      const interval = setInterval(fetchAndUpdateFightStatus, 5000);
-      return () => clearInterval(interval);
+    let interval: NodeJS.Timeout;
+    
+    if (state.status === 'in_progress') {
+      console.log('Starting fight polling');
+      
+      const poll = () => {
+        fetchAndUpdateFightStatus().then(shouldContinue => {
+          if (shouldContinue) {
+            interval = setTimeout(poll, 1000);
+          } else {
+            console.log('Stopping fight polling - fight complete or error');
+          }
+        });
+      };
+
+      poll(); // Start polling
     }
+
+    return () => {
+      if (interval) {
+        console.log('Clearing fight polling interval');
+        clearTimeout(interval);
+      }
+    };
   }, [state.status, fetchAndUpdateFightStatus]);
 
   return {
@@ -185,5 +283,6 @@ export const useFight = () => {
     placeBet,
     startFightAfterBetting,
     fetchAndUpdateFightStatus,
+    handleCashOut,
   };
 };

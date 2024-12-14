@@ -1,0 +1,20 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated/chat-client"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("CHAT_DATABASE_URL")
+}
+
+model ChatMessage {
+  id        String   @id @default(uuid())
+  user      String
+  text      String   @db.Text
+  timestamp DateTime @default(now())
+  fightId   String?
+
+  @@index([timestamp])
+  @@index([fightId])
+}

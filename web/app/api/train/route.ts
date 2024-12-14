@@ -1,50 +1,60 @@
-import { NextResponse } from 'next/server';
-import { spawn } from 'child_process';
+import { NextRequest, NextResponse } from 'next/server';
 
-export async function POST(request: Request) {
+export async function POST(req: NextRequest) {
   try {
-    const { env, num_env, num_timesteps } = await request.json();
+    const data = await req.json();
+    const { character, state, numEnv, numTimesteps, wallet } = data;
 
-    return new Promise((resolve, reject) => {
-      const pythonProcess = spawn('python', [
-        'docker_emulator/custom_scripts/model_trainer.py',
-        '--env', env,
-        '--num_env', num_env.toString(),
-        '--num_timesteps', num_timesteps.toString()
-      ]);
-
-      let modelPath = '';
-
-      pythonProcess.stdout.on('data', (data) => {
-        console.log(`stdout: ${data}`);
-        if (data.toString().includes('Model saved to:')) {
-          modelPath = data.toString().split('Model saved to:')[1].trim();
-        }
-      });
-
-      pythonProcess.stderr.on('data', (data) => {
-        console.error(`stderr: ${data}`);
-      });
-
-      pythonProcess.on('close', (code) => {
-        console.log(`child process exited with code ${code}`);
-        if (code === 0) {
-          resolve(NextResponse.json({ 
-            message: 'Agent trained successfully', 
-            model_path: modelPath 
-          }));
-        } else {
-          reject(NextResponse.json(
-            { message: 'Failed to train agent', error: `Process exited with code ${code}` },
-            { status: 500 }
-          ));
-        }
-      });
+    const response = await fetch('https://cimai.biz/train.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        character,
+        state,
+        num_env: numEnv,
+        num_timesteps: numTimesteps,
+        wallet
+      })
     });
+
+    const result = await response.json();
+    return NextResponse.json(result);
+
   } catch (error) {
-    console.error('Error in /api/train-agent:', error);
+    console.error('Training error:', error);
     return NextResponse.json(
-      { message: 'Failed to train agent', error: error instanceof Error ? error.message : 'Unknown error' },
+      { error: 'Training failed', details: error.message },
+      { status: 500 }
+    );
+  }
+}
+
+// Training status endpoint stays the same
+export async function GET(req: NextRequest) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const character = searchParams.get('character');
+    const state = searchParams.get('state');
+    const trainingId = searchParams.get('trainingId');
+
+    if (!character || !state || !trainingId) {
+      throw new Error('Character, state, and trainingId are required');
+    }
+
+    const response = await fetch(
+      `https://cimai.biz/training-status.php?character=${character}&state=${state}&trainingId=${trainingId}`
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result = await response.json();
+    return NextResponse.json(result);
+  } catch (error) {
+    console.error('Status check error:', error);
+    return NextResponse.json(
+      { error: 'Status check failed', details: error.message },
       { status: 500 }
     );
   }

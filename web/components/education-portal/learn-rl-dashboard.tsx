@@ -39,6 +39,10 @@ const tools = [
 const LearnRL: React.FC = () => {
   const [activeComponent, setActiveComponent] = useState<string | null>(null);
 
+  const handleNavigateToTraining = () => {
+    setActiveComponent('rl-game-interactions');
+  };
+
   const renderComponent = () => {
     switch (activeComponent) {
       case 'rl-basics':
@@ -48,7 +52,7 @@ const LearnRL: React.FC = () => {
       case 'rl-game-interactions':
         return <RLGameInteraction game="Mortal Kombat II" />;
       case 'decentralized-ai':
-        return <DecentralizedAI />;
+        return <DecentralizedAI onNavigateToTraining={handleNavigateToTraining} />;
       default:
         return null;
     }

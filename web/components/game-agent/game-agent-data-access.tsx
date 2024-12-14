@@ -13,7 +13,7 @@ import { useTransactionToast } from '../ui/ui-layout';
 const TOKEN_METADATA_PROGRAM_ID = new PublicKey('metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s');
 
 
-const PROGRAM_ID = new PublicKey('5RDR7qVR11FepcUbbkfLLZKNWHPhJShfsRM75hgBR8rG');
+const PROGRAM_ID = new PublicKey('7SKb68VU9C8Pmjip67q7xDjqnLekaUUNA7gM8AB5MDxN');
 
 export function useNftGameAgentProgram() {
   const { connection } = useConnection();
@@ -64,7 +64,7 @@ export function useNftGameAgentProgram() {
       // Check if the treasury account already exists
       const treasuryAccount = await connection.getAccountInfo(treasuryPda);
       
-      let tx = new Transaction();
+      const tx = new Transaction();
 
       if (!treasuryAccount) {
         const initTreasuryIx = await program.methods.initializeTreasury()

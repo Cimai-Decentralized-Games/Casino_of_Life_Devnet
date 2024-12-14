@@ -1,23 +1,39 @@
 import { NextResponse } from 'next/server';
-import Gun from 'gun';
+import { PrismaClient } from '../../../prisma/generated/chat-client';
 
-// Initialize Gun
-const gun = Gun();
+const prisma = new PrismaClient();
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    // Perform a simple operation to check if Gun is working
-    gun.get('health-check').put({ status: 'ok', timestamp: Date.now() });
-    
-    return NextResponse.json({ status: 'Gun.js connection is healthy' });
+    const messages = await prisma.chatMessage.findMany({
+      orderBy: {
+        timestamp: 'asc'
+      },
+      take: 100
+    });
+
+    return NextResponse.json(messages);
   } catch (error) {
-    console.error('Gun.js error:', error);
-    return NextResponse.json({ error: 'Failed to connect to Gun.js' }, { status: 500 });
+    console.error('Error fetching messages:', error);
+    return NextResponse.json({ error: 'Failed to fetch messages' }, { status: 500 });
   }
 }
 
 export async function POST(request: Request) {
-  // This endpoint isn't necessary for Gun.js operations, but we'll keep it
-  // in case you want to add server-side logic in the future
-  return NextResponse.json({ message: 'Gun.js handles real-time data synchronization client-side' });
+  try {
+    const { user, text, fightId } = await request.json();
+    
+    const message = await prisma.chatMessage.create({
+      data: {
+        user,
+        text,
+        fightId
+      }
+    });
+
+    return NextResponse.json(message);
+  } catch (error) {
+    console.error('Error creating message:', error);
+    return NextResponse.json({ error: 'Failed to create message' }, { status: 500 });
+  }
 }

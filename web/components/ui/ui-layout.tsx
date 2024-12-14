@@ -6,6 +6,7 @@ import { ReactNode, Suspense, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import toast, { Toaster } from 'react-hot-toast';
+import Image from 'next/image';
 
 export function UiLayout({
   children,
@@ -21,7 +22,7 @@ export function UiLayout({
       <div className="navbar bg-base-300 text-neutral-content flex-col md:flex-row space-y-2 md:space-y-0">
         <div className="flex-1">
           <Link className="btn btn-ghost normal-case text-xl" href="/">
-            <img className="h-4 md:h-6" alt="Logo" src="/logo.png" />
+            <Image className="h-4 md:h-6" alt="Logo" src="/logo.png" width={32} height={32} />
           </Link>
           <ul className="menu menu-horizontal px-1 space-x-2">
             {links.map(({ label, path }) => (
@@ -55,14 +56,14 @@ export function UiLayout({
       <footer className="footer footer-center p-4 bg-base-300 text-base-content">
         <aside>
           <p>
-            'Casino of Life' by{' '}
+            &apos;Casino of Life&apos; Repo by{' '}
             <a
               className="link hover:text-white"
-              href="https://github.com/Caballo-loko"
+              href="https://github.com/Cimai-Decentralized-Games"
               target="_blank"
               rel="noopener noreferrer"
             >
-              Caballo Loko
+              Cimai
             </a>
           </p>
         </aside>

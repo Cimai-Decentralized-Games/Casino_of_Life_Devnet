@@ -1,90 +1,166 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 import Hls from 'hls.js';
 
 interface LiveStreamProps {
   fightId: string | null;
   streamUrl: string | null;
+  fightStatus: string;
 }
 
-export const LiveStream: React.FC<LiveStreamProps> = ({ fightId, streamUrl }) => {
+const MAX_INIT_ATTEMPTS = 60;
+const INIT_DELAY = 5000;
+const RETRY_INTERVAL = 5000;
+const COOLDOWN_PERIOD = 30000;
+
+export const LiveStream: React.FC<LiveStreamProps> = ({ fightId, streamUrl, fightStatus }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const hlsRef = useRef<Hls | null>(null);
   const [hlsError, setHlsError] = useState('');
   const [hlsStatus, setHlsStatus] = useState('Waiting for fight to start');
+  const [streamReady, setStreamReady] = useState(false);
+  const initAttemptsRef = useRef(0);
+  const cooldownTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const isStreamingRef = useRef(false);
+  const lastErrorRef = useRef<string>('');
 
-  useEffect(() => {
-    console.log('LiveStream useEffect triggered', { fightId, streamUrl });
-
+  const initHls = useCallback(() => {
     if (videoRef.current && Hls.isSupported() && fightId && streamUrl) {
       if (!hlsRef.current) {
         hlsRef.current = new Hls({
-          debug: true,
+          debug: false,
           enableWorker: true,
           lowLatencyMode: true,
           liveDurationInfinity: true,
-          xhrSetup: (xhr, url) => {
-            xhr.withCredentials = false; // Ensure CORS requests don't send credentials
+          manifestLoadingTimeOut: 10000,
+          manifestLoadingMaxRetry: 3,
+          manifestLoadingRetryDelay: 1000,
+          levelLoadingTimeOut: 10000,
+          levelLoadingMaxRetry: 3,
+          levelLoadingRetryDelay: 1000,
+          fragLoadingTimeOut: 20000,
+          fragLoadingMaxRetry: 3,
+          fragLoadingRetryDelay: 1000,
+          defaultAudioCodec: 'mp4a.40.2',
+          abrEwmaDefaultEstimate: 500000,
+          startLevel: -1,
+          autoStartLoad: true,
+          xhrSetup: function(xhr, url) {
+            xhr.withCredentials = true;
           }
         });
 
         hlsRef.current.on(Hls.Events.MEDIA_ATTACHED, () => {
-          console.log('HLS: Media attached');
+          setHlsStatus('Media attached, preparing stream...');
+          
+          if (cooldownTimeoutRef.current) clearTimeout(cooldownTimeoutRef.current);
+          cooldownTimeoutRef.current = setTimeout(() => {
+            initAttemptsRef.current = 0;
+          }, COOLDOWN_PERIOD);
         });
 
         hlsRef.current.on(Hls.Events.MANIFEST_PARSED, () => {
-          console.log('HLS: Manifest parsed, ready to play');
           setHlsStatus('Ready to play');
-          videoRef.current?.play().catch(error => {
-            console.error('Error attempting to play:', error);
+          setStreamReady(true);
+          isStreamingRef.current = true;
+          videoRef.current?.play().catch(() => {
             setHlsStatus('Error playing video');
           });
         });
 
         hlsRef.current.on(Hls.Events.ERROR, (event, data) => {
-          console.error(`HLS error: ${data.type}`, data);
-          if (data.fatal) {
-            switch (data.type) {
-              case Hls.ErrorTypes.NETWORK_ERROR:
-                setHlsStatus('Network error, trying to recover');
-                hlsRef.current!.startLoad();
-                break;
-              case Hls.ErrorTypes.MEDIA_ERROR:
-                setHlsStatus('Media error, trying to recover');
-                hlsRef.current!.recoverMediaError();
-                break;
-              default:
-                setHlsStatus('Fatal error');
-                setHlsError(`Fatal error: ${data.type} - ${data.details}`);
-                break;
+          if (data.fatal || lastErrorRef.current !== data.details) {
+            lastErrorRef.current = data.details;
+            
+            if (data.fatal) {
+              switch (data.type) {
+                case Hls.ErrorTypes.NETWORK_ERROR:
+                  if (data.details === 'audioTrackLoadError') {
+                    hlsRef.current?.recoverMediaError();
+                  } else {
+                    hlsRef.current?.startLoad();
+                  }
+                  break;
+                case Hls.ErrorTypes.MEDIA_ERROR:
+                  hlsRef.current?.recoverMediaError();
+                  break;
+                default:
+                  setHlsError(`Playback error: ${data.details}`);
+                  break;
+              }
             }
-          } else {
-            setHlsStatus(`Non-fatal error: ${data.type} - ${data.details}`);
           }
         });
       }
 
-      hlsRef.current.loadSource(streamUrl);
-      hlsRef.current.attachMedia(videoRef.current);
-      setHlsStatus('Loading stream');
+      if (!isStreamingRef.current) {
+        hlsRef.current.loadSource(streamUrl);
+        hlsRef.current.attachMedia(videoRef.current);
+        setHlsStatus(`Loading stream (Attempt ${initAttemptsRef.current + 1}/${MAX_INIT_ATTEMPTS})`);
+      }
     } else if (!fightId || !streamUrl) {
       setHlsStatus('Waiting for fight to start');
     }
   }, [fightId, streamUrl]);
 
+  useEffect(() => {
+    if (fightStatus === 'in_progress' && !isStreamingRef.current) {
+      console.log('Fight started, initializing stream');
+    }
+    
+    setStreamReady(false);
+    isStreamingRef.current = false;
+    initAttemptsRef.current = 0;
+    lastErrorRef.current = '';
+
+    const attemptInit = () => {
+      if (initAttemptsRef.current < MAX_INIT_ATTEMPTS) {
+        initAttemptsRef.current++;
+        initHls();
+
+        if (!streamReady && fightStatus === 'in_progress') {
+          setTimeout(attemptInit, RETRY_INTERVAL);
+        }
+      } else {
+        setHlsError(`Failed to initialize stream after ${MAX_INIT_ATTEMPTS} attempts`);
+      }
+    };
+
+    if (fightId && streamUrl) {
+      setTimeout(attemptInit, INIT_DELAY);
+    }
+
+    return () => {
+      if (cooldownTimeoutRef.current) clearTimeout(cooldownTimeoutRef.current);
+    };
+  }, [fightId, streamUrl, initHls, fightStatus]);
+
   return (
-    <div className="card bg-base-100 shadow-xl mb-8">
-      <div className="card-body">
-        <h2 className="card-title mb-4">Live Stream</h2>
+    <div className="w-full h-full">
+      <div className="relative w-full h-full">
+        <img
+          src="/logo.png"
+          alt="Stream placeholder"
+          className="absolute w-full h-full object-cover"
+        />
         <video
           ref={videoRef}
           controls
-          className="w-full h-96 rounded-lg"
+          className={`absolute w-full h-full ${streamReady ? 'visible' : 'invisible'}`}
           playsInline
-          muted
+          autoPlay
+          preload="auto"
         />
-        {hlsError && <p className="text-error text-center mt-2">{hlsError}</p>}
-        <div className="mt-2">Stream status: <span className="font-semibold">{hlsStatus}</span></div>
+        {!streamReady && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
+            <p className="text-white text-xl text-center">
+              {hlsStatus}<br/>
+              Please wait...
+            </p>
+          </div>
+        )}
       </div>
+      {hlsError && <p className="text-error text-center mt-2">{hlsError}</p>}
+      <div className="mt-2">Stream status: <span className="font-semibold">{hlsStatus}</span></div>
     </div>
   );
 };

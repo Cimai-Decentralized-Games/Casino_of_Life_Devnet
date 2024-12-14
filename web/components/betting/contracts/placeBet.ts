@@ -3,38 +3,33 @@ import { AnchorProvider, BN } from '@coral-xyz/anchor';
 import { getAssociatedTokenAddress, TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { BETTING_PROGRAM_ID, getBettingProgram } from '@casino-of-life-dashboard/anchor';
 import { Buffer } from 'buffer';
-
-const MIN_BET_DUMBS = 1;
-
-function generateSecureFightId(): bigint {
-  const timestamp = BigInt(Date.now());
-  const randomBytes = new Uint8Array(4);
-  crypto.getRandomValues(randomBytes);
-  const randomNumber = BigInt(new DataView(randomBytes.buffer).getUint32(0));
-  return (timestamp << 16n) | (randomNumber & 0xFFFFn);
-}
+import { OddsCalculator } from '../services/odds-calculator';
+import { BalanceManager } from '../services/balance-manager';
 
 export const placeBet = async (
   programId: PublicKey,
-  originalFightId: string,
+  fightId: string,
   betAmount: number,
   odds: number,
   wallet: any,
-  connection: Connection
+  connection: Connection,
+  activeFightSecureId: string,
+  onBalanceUpdate?: (balances: any) => void
 ): Promise<string> => {
   console.log('Starting placeBet function');
   console.log('BETTING_PROGRAM_ID:', programId.toBase58());
-  console.log('Original Fight ID:', originalFightId);
-  console.log('Bet Amount:', betAmount);
+  console.log('Fight ID:', fightId);
+  console.log('Secure Fight ID:', activeFightSecureId);
+  console.log('Bet Amount (DUMBS):', betAmount);
   console.log('Odds:', odds);
 
-  const secureFightId = generateSecureFightId();
-  console.log('Generated Secure Fight ID:', secureFightId.toString());
+  const rawBetAmount = new BN(betAmount);
+  console.log('Bet amount:', {
+    amount: betAmount,
+    bnAmount: rawBetAmount.toString()
+  });
 
-  const betAmountLamports = Math.floor(betAmount * 1e9);
-  console.log('Bet Amount in lamports:', betAmountLamports);
-
-  const provider = new AnchorProvider(connection, wallet, { preflightCommitment: 'processed' });
+  const provider = new AnchorProvider(connection, wallet as any, { preflightCommitment: 'processed' });
   const program = getBettingProgram(provider);
   console.log('Program ID:', program.programId.toBase58());
 
@@ -42,6 +37,18 @@ export const placeBet = async (
     [Buffer.from("betting_state")],
     program.programId
   );
+  
+  const bettingStateAccount = await program.account.bettingState.fetch(bettingState);
+  console.log("Betting State Details:", {
+    maxBet: bettingStateAccount.maxBet.toString(),
+    exchangeRate: bettingStateAccount.exchangeRate.toString(),
+    houseFee: bettingStateAccount.houseFee.toString(),
+    minDeposit: bettingStateAccount.minDeposit.toString(),
+    totalSolReserve: bettingStateAccount.totalSolReserve.toString(),
+    totalDumbsInCirculation: bettingStateAccount.totalDumbsInCirculation.toString(),
+    attemptedBet: rawBetAmount.toString()
+  });
+
   const [betVault] = PublicKey.findProgramAddressSync(
     [Buffer.from("bet_vault"), bettingState.toBuffer()],
     program.programId
@@ -57,17 +64,25 @@ export const placeBet = async (
   console.log('Treasury PDA:', treasury.toBase58());
   console.log('DUMBS Treasury PDA:', dumbsTreasury.toBase58());
   console.log('DUMBS Treasury Account:', dumbsTreasuryAccount.toBase58());
-
   console.log('Wallet public key:', wallet.publicKey.toBase58());
   
   const secureFightIdBuffer = Buffer.alloc(8);
-  secureFightIdBuffer.writeBigUInt64LE(secureFightId);
+  secureFightIdBuffer.writeBigUInt64LE(BigInt(activeFightSecureId));
+  console.log('Using Secure Fight ID Buffer for PDA:', secureFightIdBuffer);
 
   const [bet] = PublicKey.findProgramAddressSync(
     [Buffer.from("bet"), wallet.publicKey.toBuffer(), secureFightIdBuffer],
     program.programId
   );
   console.log('Derived Bet PDA:', bet.toBase58());
+
+  const oddsCalculator = new OddsCalculator();
+  const contractOdds = oddsCalculator.convertOddsToContractFormat(odds);
+  console.log('Converting odds:', {
+    original: odds,
+    safe: odds,
+    contractFormat: contractOdds
+  });
 
   try {
     console.log('Fetching Betting State Data...');
@@ -146,10 +161,12 @@ export const placeBet = async (
     
     console.log('Fetching User DUMBS Balance...');
     const userDumbsBalance = await connection.getTokenAccountBalance(userDumbsAccount);
-    console.log('User DUMBS Balance:', userDumbsBalance.value.uiAmount);
+    console.log('User DUMBS Balance:', {
+      raw: userDumbsBalance.value.amount
+    });
 
-    if (Number(userDumbsBalance.value.amount) < betAmountLamports) {
-      throw new Error(`Insufficient balance. You have ${Number(userDumbsBalance.value.amount) / 1e9} DUMBS, but tried to bet ${betAmountLamports / 1e9} DUMBS`);
+    if (rawBetAmount.gt(new BN(userDumbsBalance.value.amount))) {
+      throw new Error(`Insufficient balance. You have ${userDumbsBalance.value.amount} DUMBS, but tried to bet ${betAmount} DUMBS`);
     }
 
     // Fetch and log DUMBS treasury account info
@@ -159,9 +176,16 @@ export const placeBet = async (
     const dumbsTreasuryTokenInfo = await connection.getTokenAccountBalance(dumbsTreasuryAccount);
     console.log('DUMBS Treasury Token Account Info:', dumbsTreasuryTokenInfo);
 
-    // Calculate and log the fee amount
-    const feeAmount = Math.floor(betAmountLamports * bettingStateData.houseFee / 10000);
-    console.log('Fee Amount:', feeAmount);
+    // Calculate fee with raw amounts
+    const feeAmount = rawBetAmount.mul(new BN(bettingStateData.houseFee)).div(new BN(10000));
+    console.log('Fee Amount:', {
+      raw: feeAmount.toString()
+    });
+
+    console.log('Placing bet with amounts:', {
+      rawBetAmount: rawBetAmount.toString(),
+      rawFeeAmount: feeAmount.toString()
+    });
 
     console.log('Preparing to call program.methods.placeBet');
     console.log('Accounts being used:');
@@ -175,9 +199,13 @@ export const placeBet = async (
     console.log('- Betting State:', bettingState.toBase58());
     console.log('- DUMBS Mint:', dumbsMint.toBase58());
 
-    console.log('Calling program.methods.placeBet...');
+    console.log('Calling program.methods.placeBet with amount:', rawBetAmount.toString());
     const tx = await program.methods
-      .placeBet(new BN(betAmountLamports), new BN(secureFightId.toString()), new BN(Math.floor(odds * 100)))
+      .placeBet(
+        rawBetAmount,
+        new BN(activeFightSecureId),
+        new BN(contractOdds)
+      )
       .accounts({
         bettor: wallet.publicKey,
         userDumbsAccount: userDumbsAccount,
@@ -195,6 +223,18 @@ export const placeBet = async (
       .rpc();
 
     console.log('Bet placed successfully. Transaction ID:', tx);
+
+    // Wait for confirmation and update balances
+    await connection.confirmTransaction(tx);
+    
+    // Refresh balances with fight ID for accurate bet amount
+    const balanceManager = new BalanceManager(connection);
+    const updatedBalances = await balanceManager.getTotalDumbsBalance(wallet.publicKey, activeFightSecureId);
+    
+    if (onBalanceUpdate) {
+      onBalanceUpdate(updatedBalances);
+    }
+
     return tx;
   } catch (error) {
     console.error('Error in placeBet:', error);

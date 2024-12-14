@@ -1,76 +1,55 @@
-import { NextResponse } from 'next/server';
-import { exec } from 'child_process';
+import { NextRequest, NextResponse } from 'next/server';
 
-export const config = {
-  api: {
-    responseLimit: false,
-    bodyParser: {
-      sizeLimit: '10mb'
-    },
-  },
-}
-
-export async function POST(request: Request) {
+export async function POST(req: NextRequest) {
   try {
-    const { env, state, num_env, num_timesteps, output_basedir, load_model, play, record, stream, stream_saved, video_path } = await request.json();
+    const data = await req.json();
+    const { character, state } = data;
 
-    const port = process.env.PORT || 3001;
-    const hostUrl = `http://host.docker.internal:${port}`;
-
-    let args = [
-      `--env "${env}"`,
-      state ? `--state "${state}"` : '',
-      `--num_env ${num_env}`,
-      `--num_timesteps ${num_timesteps}`,
-      `--output_basedir "${output_basedir}"`,
-      load_model ? `--load_model "${load_model}"` : '',
-      play ? '--play' : '',
-      record ? '--record' : '',
-      stream ? '--stream' : '',
-      stream_saved ? '--stream_saved' : '',
-      video_path ? `--video_path "${video_path}"` : ''
-    ].filter(Boolean).join(' ');
-
-    const command = `docker exec -i mk2_container_v6 /bin/bash -c "export HOST_URL=${hostUrl} && source /opt/conda/etc/profile.d/conda.sh && conda activate retro_env && python /app/custom_scripts/model_trainer.py ${args}"`;
-
-    const outputStream = new ReadableStream({
-      start(controller) {
-        const process = exec(command);
-
-        process.stdout?.on('data', (data) => {
-          const lines = data.toString().split('\n');
-          lines.forEach((line: string) => {
-            if (line.startsWith('data:image/jpeg;base64,')) {
-              controller.enqueue(`data: ${line}\n\n`);
-            } else if (line.trim()) {
-              console.log(`Python output: ${line}`);
-            }
-          });
-        });
-
-        process.stderr?.on('data', (data) => {
-          console.error(`Python error: ${data}`);
-        });
-
-        process.on('close', (code) => {
-          console.log(`Python process exited with code ${code}`);
-          controller.close();
-        });
-      }
+    // Call your PHP endpoint
+    const response = await fetch('https://cimai.biz/play.php', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        character,
+        state,
+        play: true,
+        stream: true,
+      }),
     });
 
-    return new Response(outputStream, {
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Stream the video frames back to the client
+    const reader = response.body?.getReader();
+    const stream = new ReadableStream({
+      async start(controller) {
+        try {
+          while (!reader!.closed) {
+            const { done, value } = await reader!.read();
+            if (done) break;
+            controller.enqueue(value);
+          }
+          controller.close();
+        } catch (error) {
+          controller.error(error);
+        }
+      },
+    });
+
+    return new NextResponse(stream, {
       headers: {
         'Content-Type': 'text/event-stream',
         'Cache-Control': 'no-cache',
         'Connection': 'keep-alive',
       },
     });
+
   } catch (error) {
-    console.error('Error in /api/playing:', error);
-    return NextResponse.json(
-      { message: 'Failed to play agent', error: error instanceof Error ? error.message : 'Unknown error' },
-      { status: 500 }
-    );
+    console.error('Playing error:', error);
+    return NextResponse.json({ error: 'Playing failed' }, { status: 500 });
   }
 }

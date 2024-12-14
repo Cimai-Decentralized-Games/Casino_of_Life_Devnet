@@ -9,7 +9,7 @@ const QLearningPage: React.FC = () => {
       </h1>
       <div className="bg-base-200 p-6 rounded-lg shadow-lg mb-8">
         <p className="text-lg">
-          Q-Learning is a model-free reinforcement learning algorithm used to find the optimal action-selection policy for any given Markov Decision Process (MDP). It's an off-policy learner, meaning it can learn from actions that are outside the current policy.
+          Q-Learning is a model-free reinforcement learning algorithm used to find the optimal action-selection policy for any given Markov Decision Process (MDP). It&apos;s an off-policy learner, meaning it can learn from actions that are outside the current policy.
         </p>
       </div>
       <section className="mb-8">
@@ -29,29 +29,29 @@ const QLearningPage: React.FC = () => {
           <li className="ml-6">Choose a starting state</li>
           <li className="ml-6">While the state is not terminal:</li>
           <li className="ml-12">Choose an action using an exploration strategy (e.g., ε-greedy)</li>
-          <li className="ml-12">Take the action, observe reward R and new state S'</li>
+          <li className="ml-12">Take the action, observe reward R and new state S&apos;</li>
           <li className="ml-12">Update Q-value using the Q-learning update rule</li>
-          <li className="ml-12">Move to the new state S'</li>
+          <li className="ml-12">Move to the new state S&apos;</li>
           <li>Repeat until convergence</li>
         </ol>
       </section>
       <section className="mb-8">
         <h2 className="text-2xl font-semibold mb-4">Q-Learning Update Rule</h2>
         <div className="bg-base-100 p-4 rounded-lg shadow">
-          <p className="text-lg font-semibold mb-2">Q(S, A) ← Q(S, A) + α [R + γ max<sub>a</sub> Q(S', a) - Q(S, A)]</p>
+          <p className="text-lg font-semibold mb-2">Q(S, A) ← Q(S, A) + α [R + γ max<sub>a</sub> Q(S&apos;, a) - Q(S, A)]</p>
           <ul className="list-disc list-inside space-y-1">
             <li>Q(S, A): Q-value for the current state-action pair</li>
             <li>α: Learning rate (0 &lt; α ≤ 1)</li>
             <li>R: Immediate reward</li>
             <li>γ: Discount factor (0 ≤ γ &lt; 1)</li>
-            <li>max<sub>a</sub> Q(S', a): Maximum Q-value for the next state</li>
+            <li>max<sub>a</sub> Q(S&apos;, a): Maximum Q-value for the next state</li>
           </ul>
         </div>
       </section>
       <section className="mb-8">
         <h2 className="text-2xl font-semibold mb-4">Advantages of Q-Learning</h2>
         <ul className="list-disc list-inside space-y-2">
-          <li>Model-free: Does not require knowledge of the environment's dynamics</li>
+          <li>Model-free: Does not require knowledge of the environment&apos;s dynamics</li>
           <li>Off-policy: Can learn from actions not in the current policy, allowing for exploration</li>
           <li>Guaranteed convergence to optimal policy (given sufficient exploration)</li>
           <li>Can handle stochastic environments</li>
@@ -78,7 +78,7 @@ const QLearningPage: React.FC = () => {
             <p>Provides probably approximately correct (PAC) learning guarantees.</p>
           </div>
           <div className="bg-base-100 p-4 rounded-lg shadow">
-            <h3 className="text-xl font-semibold mb-2">Peng's Q(λ)</h3>
+            <h3 className="text-xl font-semibold mb-2">Peng&apos;s Q(λ)</h3>
             <p>Combines Q-learning with eligibility traces for faster learning.</p>
           </div>
           <div className="bg-base-100 p-4 rounded-lg shadow">

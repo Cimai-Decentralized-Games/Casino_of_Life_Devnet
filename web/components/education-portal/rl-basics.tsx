@@ -3,7 +3,7 @@
 import React from "react";
 import RLInfoCard from "./rl-info-card";
 import Link from "next/link";
-import { FaGlobe, FaHandPointer, FaStar, FaChartBar, FaCalculator, FaBalanceScale, FaChartLine, FaBrain, FaNetworkWired } from 'react-icons/fa';
+import { FaGlobe, FaHandPointer, FaStar, FaChartBar, FaCalculator, FaBalanceScale, FaChartLine, FaBrain, FaNetworkWired, FaTrophy, FaUpload } from 'react-icons/fa';
 
 const fundamentalTopics = [
   { 
@@ -27,9 +27,29 @@ const fundamentalTopics = [
     description: "A state represents a snapshot of the environment at a particular time. It includes all the information the agent uses to make decisions."
   },
   { 
-    title: "Q-Value", 
+    title: "Training", 
+    Icon: FaBrain,
+    description: "Training is the process of updating the agent's policy based on the feedback it receives from the environment."
+  },
+  {
+    title: "Evaluation",
     Icon: FaCalculator,
-    description: "A Q-value represents the value of taking a particular action in a given state, helping the agent determine which action will yield the highest reward."
+    description: "Evaluation is the process of testing the agent's performance in the environment."
+  },
+  { 
+    title: "PPO ", 
+    Icon: FaCalculator,
+    description: "PPO is a popular policy gradient method that uses a trust region to update the policy, ensuring that the updates are not too large and avoiding divergence."
+  },
+  {
+    title: "Tournaments",
+    Icon: FaTrophy,
+    description: "Tournament System is the process of testing the agent's performance in the environment."
+  },
+  {
+    title: "tournament-system",
+    Icon: FaUpload,
+    description: "Tournament System is the process of submitting the agent's trained model to the tournament system."
   }
 ];
 
@@ -45,9 +65,9 @@ const strategyTopics = [
     description: "Policy gradient methods directly optimize the policy (the action-selection mechanism) to maximize the reward. These methods work well in environments with continuous action spaces."
   },
   { 
-    title: "Q-Learning", 
+    title: "PPO", 
     Icon: FaBrain,
-    description: "Q-learning is a popular value-based method where the agent updates its Q-values (state-action values) to converge on the optimal strategy over time."
+    description: "PPO is a popular policy gradient method that uses a trust region to update the policy, ensuring that the updates are not too large and avoiding divergence."
   },
   { 
     title: "Deep Q-Networks", 
@@ -73,7 +93,13 @@ const RLBasics: React.FC = () => {
         <h2 className="text-3xl font-semibold mb-6">Fundamentals of RL</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {fundamentalTopics.map((topic, index) => (
-            <Link href={`/education-portal/fundamentals/${topic.title.toLowerCase()}`} key={index}>
+            <Link 
+              href={`/education-portal/fundamentals/${topic.title
+                .toLowerCase()
+                .replace(/\s+/g, '-')
+                .replace(/[^a-z0-9-]/g, '')}`} 
+              key={index}
+            >
               <RLInfoCard
                 title={topic.title}
                 Icon={topic.Icon}

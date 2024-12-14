@@ -41,19 +41,19 @@ export default function RegistryFeature() {
 
   const { data: collections, isLoading: isLoadingCollections, error: collectionsError } = useQuery<Collection[], Error>({
     queryKey: ['collections', programId?.toString()],
-    queryFn: async () => {
+    queryFn: async (): Promise<Collection[]> => {
       if (!program) throw new Error('Program not initialized');
       const collections = await program.account.collection.all();
       return collections;
     },
     enabled: !!program && !!programId,
     staleTime: 60000, // 1 minute
-    cacheTime: 300000, // 5 minutes
+    gcTime: 300000, // 5 minutes
   });
 
   const { data: agents, isLoading: isLoadingAgents, error: agentsError } = useQuery<Agent[], Error>({
     queryKey: ['agents', collections],
-    queryFn: async () => {
+    queryFn: async (): Promise<Agent[]> => {
       if (!program || !collections) return [];
       const collectionIds = collections.map(c => c.account.collectionId.toBase58());
       const allAgents = await Promise.all(
@@ -80,7 +80,7 @@ export default function RegistryFeature() {
     },
     enabled: !!program && !!collections,
     staleTime: 60000, // 1 minute
-    cacheTime: 300000, // 5 minutes
+    gcTime: 300000, // 5 minutes
   });
 
   if (!walletPublicKey) return <div className="text-center py-8">Please connect your wallet</div>;
