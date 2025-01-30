@@ -1,0 +1,9 @@
+[target.sbf-solana-solana]
+rustflags = [
+    "-C", "target-cpu=native",
+    "-C", "link-arg=-undefined",
+    "-C", "link-arg=dynamic_lookup",
+]
+
+[build]
+rustflags = ["-C", "target-feature=+crt-static"]

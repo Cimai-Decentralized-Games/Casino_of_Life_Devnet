@@ -1,5 +1,4 @@
 {
-  "compileOnSave": false,
   "compilerOptions": {
     "rootDir": ".",
     "sourceMap": true,
@@ -17,6 +16,7 @@
     "paths": {
       "@/*": ["./web/*"],
       "@casino-of-life-dashboard/anchor": ["anchor/src/index.ts"],
+      "@casino-of-life-dashboard/anchor/*": ["anchor/src/*"],
       "@web/*": ["./web/*"],
       "@components/*": ["./web/components/*"],
       "@app/*": ["./web/app/*"]

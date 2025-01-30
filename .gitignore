@@ -35,7 +35,6 @@ Thumbs.db
 .nx/cache
 # Next.js
 .next
-out
 .anchor
 anchor/target/deploy
 anchor/target/debug

@@ -1,5 +1,5 @@
 {
-  "address": "5FwvYgAChMwMsBrmSKBBZeWRGX27p62G3o3UsBQjhVJZ",
+  "address": "GYLtHxFn26XJr9fcHgC28r2mPR64sUQqVu3EMfQ4FzER",
   "metadata": {
     "name": "betting_program",
     "version": "0.1.0",
@@ -26,118 +26,45 @@
           "signer": true
         },
         {
-          "name": "user_dumbs_account",
+          "name": "user_betting_account",
           "writable": true,
           "pda": {
             "seeds": [
               {
-                "kind": "account",
-                "path": "user"
-              },
-              {
                 "kind": "const",
                 "value": [
-                  6,
-                  221,
-                  246,
-                  225,
-                  215,
+                  117,
+                  115,
                   101,
-                  161,
-                  147,
-                  217,
-                  203,
-                  225,
-                  70,
-                  206,
-                  235,
-                  121,
-                  172,
-                  28,
-                  180,
-                  133,
-                  237,
-                  95,
-                  91,
-                  55,
-                  145,
-                  58,
-                  140,
-                  245,
-                  133,
-                  126,
-                  255,
-                  0,
-                  169
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "dumbs_mint"
-              }
-            ],
-            "program": {
-              "kind": "const",
-              "value": [
-                140,
-                151,
-                37,
-                143,
-                78,
-                36,
-                137,
-                241,
-                187,
-                61,
-                16,
-                41,
-                20,
-                142,
-                13,
-                131,
-                11,
-                90,
-                19,
-                153,
-                218,
-                255,
-                16,
-                132,
-                4,
-                142,
-                123,
-                216,
-                219,
-                233,
-                248,
-                89
-              ]
-            }
-          }
-        },
-        {
-          "name": "bet",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
+                  114,
+                  45,
                   98,
                   101,
+                  116,
+                  45,
+                  97,
+                  99,
+                  99,
+                  111,
+                  117,
+                  110,
                   116
                 ]
               },
               {
                 "kind": "account",
                 "path": "user"
-              },
-              {
-                "kind": "arg",
-                "path": "fight_id"
               }
             ]
           }
+        },
+        {
+          "name": "user_dumbs_account",
+          "writable": true
+        },
+        {
+          "name": "user_rapr_account",
+          "writable": true
         },
         {
           "name": "sol_vault",
@@ -150,6 +77,51 @@
                   115,
                   111,
                   108,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "bet_vault_dumbs",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  101,
+                  116,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "bet_vault_rapr",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  97,
+                  112,
+                  114,
                   95,
                   118,
                   97,
@@ -185,6 +157,27 @@
           }
         },
         {
+          "name": "treasury",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  116,
+                  114,
+                  101,
+                  97,
+                  115,
+                  117,
+                  114,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
           "name": "betting_state",
           "writable": true,
           "pda": {
@@ -211,67 +204,86 @@
           }
         },
         {
-          "name": "treasury",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  116,
-                  114,
-                  101,
-                  97,
-                  115,
-                  117,
-                  114,
-                  121
-                ]
-              }
-            ]
-          }
-        },
-        {
           "name": "token_program",
-          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+          "address": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
         },
         {
           "name": "system_program",
           "address": "11111111111111111111111111111111"
-        },
-        {
-          "name": "bet_vault",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  98,
-                  101,
-                  116,
-                  95,
-                  118,
-                  97,
-                  117,
-                  108,
-                  116
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "betting_state"
-              }
-            ]
-          }
         }
       ],
       "args": [
         {
           "name": "amount",
           "type": "u64"
+        },
+        {
+          "name": "token_type",
+          "type": {
+            "defined": {
+              "name": "TokenType"
+            }
+          }
         }
       ]
+    },
+    {
+      "name": "create_user_betting_account",
+      "discriminator": [
+        58,
+        119,
+        206,
+        63,
+        123,
+        215,
+        111,
+        10
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "user_betting_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  117,
+                  115,
+                  101,
+                  114,
+                  45,
+                  98,
+                  101,
+                  116,
+                  45,
+                  97,
+                  99,
+                  99,
+                  111,
+                  117,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "payer"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
     },
     {
       "name": "deposit_sol",
@@ -311,7 +323,56 @@
                 ]
               }
             ]
+          },
+          "relations": [
+            "betting_state"
+          ]
+        },
+        {
+          "name": "bet_vault_dumbs",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  101,
+                  116,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              }
+            ]
           }
+        },
+        {
+          "name": "treasury",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  116,
+                  114,
+                  101,
+                  97,
+                  115,
+                  117,
+                  114,
+                  121
+                ]
+              }
+            ]
+          },
+          "relations": [
+            "betting_state"
+          ]
         },
         {
           "name": "dumbs_mint",
@@ -346,41 +407,8 @@
                 "path": "depositor"
               },
               {
-                "kind": "const",
-                "value": [
-                  6,
-                  221,
-                  246,
-                  225,
-                  215,
-                  101,
-                  161,
-                  147,
-                  217,
-                  203,
-                  225,
-                  70,
-                  206,
-                  235,
-                  121,
-                  172,
-                  28,
-                  180,
-                  133,
-                  237,
-                  95,
-                  91,
-                  55,
-                  145,
-                  58,
-                  140,
-                  245,
-                  133,
-                  126,
-                  255,
-                  0,
-                  169
-                ]
+                "kind": "account",
+                "path": "token_program"
               },
               {
                 "kind": "account",
@@ -448,104 +476,35 @@
                   116,
                   101
                 ]
-              }
-            ]
-          }
-        },
-        {
-          "name": "treasury",
-          "writable": true,
-          "pda": {
-            "seeds": [
+              },
               {
-                "kind": "const",
-                "value": [
-                  116,
-                  114,
-                  101,
-                  97,
-                  115,
-                  117,
-                  114,
-                  121
-                ]
+                "kind": "account",
+                "path": "depositor"
               }
             ]
           }
         },
         {
           "name": "token_program",
-          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+          "address": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
+        },
+        {
+          "name": "associated_token_program",
+          "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
         },
         {
           "name": "system_program",
           "address": "11111111111111111111111111111111"
+        },
+        {
+          "name": "rent",
+          "address": "SysvarRent111111111111111111111111111111111"
         }
       ],
       "args": [
         {
           "name": "amount",
           "type": "u64"
-        }
-      ]
-    },
-    {
-      "name": "initialize",
-      "discriminator": [
-        175,
-        175,
-        109,
-        31,
-        13,
-        152,
-        155,
-        237
-      ],
-      "accounts": [
-        {
-          "name": "authority",
-          "writable": true,
-          "signer": true
-        },
-        {
-          "name": "betting_state",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  98,
-                  101,
-                  116,
-                  116,
-                  105,
-                  110,
-                  103,
-                  95,
-                  115,
-                  116,
-                  97,
-                  116,
-                  101
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "name": "system_program",
-          "address": "11111111111111111111111111111111"
-        }
-      ],
-      "args": [
-        {
-          "name": "params",
-          "type": {
-            "defined": {
-              "name": "InitializeParams"
-            }
-          }
         }
       ]
     },
@@ -585,16 +544,45 @@
                   108,
                   116
                 ]
-              },
-              {
-                "kind": "account",
-                "path": "betting_state"
               }
             ]
           }
         },
         {
           "name": "dumbs_mint"
+        },
+        {
+          "name": "betting_state",
+          "writable": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "initialize_betting_state",
+      "discriminator": [
+        241,
+        37,
+        132,
+        171,
+        191,
+        147,
+        95,
+        206
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
         },
         {
           "name": "betting_state",
@@ -618,6 +606,145 @@
                   116,
                   101
                 ]
+              },
+              {
+                "kind": "account",
+                "path": "authority"
+              }
+            ]
+          }
+        },
+        {
+          "name": "bet_vault",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  101,
+                  116,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "rapr_vault",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  97,
+                  112,
+                  114,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "treasury",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  116,
+                  114,
+                  101,
+                  97,
+                  115,
+                  117,
+                  114,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "sol_vault",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  111,
+                  108,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "initialize_betting_state_base",
+      "discriminator": [
+        177,
+        45,
+        156,
+        121,
+        238,
+        206,
+        204,
+        208
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "betting_state",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  101,
+                  116,
+                  116,
+                  105,
+                  110,
+                  103,
+                  95,
+                  115,
+                  116,
+                  97,
+                  116,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "authority"
               }
             ]
           }
@@ -625,14 +752,6 @@
         {
           "name": "system_program",
           "address": "11111111111111111111111111111111"
-        },
-        {
-          "name": "token_program",
-          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
-        },
-        {
-          "name": "rent",
-          "address": "SysvarRent111111111111111111111111111111111"
         }
       ],
       "args": []
@@ -680,6 +799,7 @@
         },
         {
           "name": "betting_state",
+          "writable": true,
           "pda": {
             "seeds": [
               {
@@ -699,36 +819,39 @@
                   116,
                   101
                 ]
+              },
+              {
+                "kind": "account",
+                "path": "authority"
               }
             ]
           }
         },
         {
-          "name": "token_program",
-          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+          "name": "rent",
+          "address": "SysvarRent111111111111111111111111111111111"
+        },
+        {
+          "name": "token_program"
         },
         {
           "name": "system_program",
           "address": "11111111111111111111111111111111"
-        },
-        {
-          "name": "rent",
-          "address": "SysvarRent111111111111111111111111111111111"
         }
       ],
       "args": []
     },
     {
-      "name": "initialize_dumbs_treasury",
+      "name": "initialize_rapr_vault",
       "discriminator": [
-        83,
-        43,
-        185,
-        115,
-        180,
-        153,
-        191,
-        241
+        111,
+        224,
+        216,
+        62,
+        30,
+        247,
+        136,
+        217
       ],
       "accounts": [
         {
@@ -737,140 +860,42 @@
           "signer": true
         },
         {
-          "name": "dumbs_treasury",
+          "name": "rapr_vault",
           "writable": true,
           "pda": {
             "seeds": [
               {
                 "kind": "const",
                 "value": [
-                  100,
-                  117,
-                  109,
-                  98,
-                  115,
-                  95,
-                  116,
                   114,
-                  101,
                   97,
-                  115,
-                  117,
+                  112,
                   114,
-                  121
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
                 ]
               }
             ]
           }
         },
         {
-          "name": "dumbs_treasury_account",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "account",
-                "path": "dumbs_treasury"
-              },
-              {
-                "kind": "const",
-                "value": [
-                  6,
-                  221,
-                  246,
-                  225,
-                  215,
-                  101,
-                  161,
-                  147,
-                  217,
-                  203,
-                  225,
-                  70,
-                  206,
-                  235,
-                  121,
-                  172,
-                  28,
-                  180,
-                  133,
-                  237,
-                  95,
-                  91,
-                  55,
-                  145,
-                  58,
-                  140,
-                  245,
-                  133,
-                  126,
-                  255,
-                  0,
-                  169
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "dumbs_mint"
-              }
-            ],
-            "program": {
-              "kind": "const",
-              "value": [
-                140,
-                151,
-                37,
-                143,
-                78,
-                36,
-                137,
-                241,
-                187,
-                61,
-                16,
-                41,
-                20,
-                142,
-                13,
-                131,
-                11,
-                90,
-                19,
-                153,
-                218,
-                255,
-                16,
-                132,
-                4,
-                142,
-                123,
-                216,
-                219,
-                233,
-                248,
-                89
-              ]
-            }
-          }
+          "name": "rapr_mint"
         },
         {
-          "name": "dumbs_mint"
+          "name": "betting_state",
+          "writable": true
         },
         {
           "name": "token_program",
-          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
-        },
-        {
-          "name": "associated_token_program",
-          "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
+          "address": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
         },
         {
           "name": "system_program",
           "address": "11111111111111111111111111111111"
-        },
-        {
-          "name": "rent",
-          "address": "SysvarRent111111111111111111111111111111111"
         }
       ],
       "args": []
@@ -891,7 +916,10 @@
         {
           "name": "authority",
           "writable": true,
-          "signer": true
+          "signer": true,
+          "relations": [
+            "betting_state"
+          ]
         },
         {
           "name": "sol_vault",
@@ -937,6 +965,10 @@
                   116,
                   101
                 ]
+              },
+              {
+                "kind": "account",
+                "path": "authority"
               }
             ]
           }
@@ -944,6 +976,189 @@
         {
           "name": "system_program",
           "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "initialize_state_accounts",
+      "discriminator": [
+        10,
+        131,
+        156,
+        103,
+        224,
+        195,
+        193,
+        104
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "betting_state",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  101,
+                  116,
+                  116,
+                  105,
+                  110,
+                  103,
+                  95,
+                  115,
+                  116,
+                  97,
+                  116,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "authority"
+              }
+            ]
+          }
+        },
+        {
+          "name": "dumbs_mint",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  117,
+                  109,
+                  98,
+                  115,
+                  95,
+                  109,
+                  105,
+                  110,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "user_token_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "authority"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "dumbs_mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "rapr_mint"
+        },
+        {
+          "name": "token_program",
+          "address": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
+        },
+        {
+          "name": "associated_token_program",
+          "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        },
+        {
+          "name": "rent",
+          "address": "SysvarRent111111111111111111111111111111111"
         }
       ],
       "args": []
@@ -964,7 +1179,10 @@
         {
           "name": "authority",
           "writable": true,
-          "signer": true
+          "signer": true,
+          "relations": [
+            "betting_state"
+          ]
         },
         {
           "name": "treasury",
@@ -983,309 +1201,6 @@
                   114,
                   121
                 ]
-              }
-            ]
-          }
-        },
-        {
-          "name": "system_program",
-          "address": "11111111111111111111111111111111"
-        }
-      ],
-      "args": []
-    },
-    {
-      "name": "place_bet",
-      "discriminator": [
-        222,
-        62,
-        67,
-        220,
-        63,
-        166,
-        126,
-        33
-      ],
-      "accounts": [
-        {
-          "name": "bettor",
-          "writable": true,
-          "signer": true
-        },
-        {
-          "name": "user_dumbs_account",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "account",
-                "path": "bettor"
-              },
-              {
-                "kind": "const",
-                "value": [
-                  6,
-                  221,
-                  246,
-                  225,
-                  215,
-                  101,
-                  161,
-                  147,
-                  217,
-                  203,
-                  225,
-                  70,
-                  206,
-                  235,
-                  121,
-                  172,
-                  28,
-                  180,
-                  133,
-                  237,
-                  95,
-                  91,
-                  55,
-                  145,
-                  58,
-                  140,
-                  245,
-                  133,
-                  126,
-                  255,
-                  0,
-                  169
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "dumbs_mint"
-              }
-            ],
-            "program": {
-              "kind": "const",
-              "value": [
-                140,
-                151,
-                37,
-                143,
-                78,
-                36,
-                137,
-                241,
-                187,
-                61,
-                16,
-                41,
-                20,
-                142,
-                13,
-                131,
-                11,
-                90,
-                19,
-                153,
-                218,
-                255,
-                16,
-                132,
-                4,
-                142,
-                123,
-                216,
-                219,
-                233,
-                248,
-                89
-              ]
-            }
-          }
-        },
-        {
-          "name": "bet_vault",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  98,
-                  101,
-                  116,
-                  95,
-                  118,
-                  97,
-                  117,
-                  108,
-                  116
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "betting_state"
-              }
-            ]
-          }
-        },
-        {
-          "name": "treasury",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  116,
-                  114,
-                  101,
-                  97,
-                  115,
-                  117,
-                  114,
-                  121
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "name": "dumbs_treasury",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  100,
-                  117,
-                  109,
-                  98,
-                  115,
-                  95,
-                  116,
-                  114,
-                  101,
-                  97,
-                  115,
-                  117,
-                  114,
-                  121
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "name": "dumbs_treasury_account",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "account",
-                "path": "dumbs_treasury"
-              },
-              {
-                "kind": "const",
-                "value": [
-                  6,
-                  221,
-                  246,
-                  225,
-                  215,
-                  101,
-                  161,
-                  147,
-                  217,
-                  203,
-                  225,
-                  70,
-                  206,
-                  235,
-                  121,
-                  172,
-                  28,
-                  180,
-                  133,
-                  237,
-                  95,
-                  91,
-                  55,
-                  145,
-                  58,
-                  140,
-                  245,
-                  133,
-                  126,
-                  255,
-                  0,
-                  169
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "dumbs_mint"
-              }
-            ],
-            "program": {
-              "kind": "const",
-              "value": [
-                140,
-                151,
-                37,
-                143,
-                78,
-                36,
-                137,
-                241,
-                187,
-                61,
-                16,
-                41,
-                20,
-                142,
-                13,
-                131,
-                11,
-                90,
-                19,
-                153,
-                218,
-                255,
-                16,
-                132,
-                4,
-                142,
-                123,
-                216,
-                219,
-                233,
-                248,
-                89
-              ]
-            }
-          }
-        },
-        {
-          "name": "bet",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  98,
-                  101,
-                  116
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "bettor"
-              },
-              {
-                "kind": "arg",
-                "path": "fight_id"
               }
             ]
           }
@@ -1312,16 +1227,13 @@
                   116,
                   101
                 ]
+              },
+              {
+                "kind": "account",
+                "path": "authority"
               }
             ]
           }
-        },
-        {
-          "name": "dumbs_mint"
-        },
-        {
-          "name": "token_program",
-          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
         },
         {
           "name": "system_program",
@@ -1332,79 +1244,136 @@
           "address": "SysvarRent111111111111111111111111111111111"
         }
       ],
-      "args": [
-        {
-          "name": "amount",
-          "type": "u64"
-        },
-        {
-          "name": "fight_id",
-          "type": "u64"
-        },
-        {
-          "name": "odds",
-          "type": "u64"
-        }
-      ]
+      "args": []
     },
     {
-      "name": "settle_bet",
+      "name": "initialize_user_account",
       "discriminator": [
-        115,
-        55,
-        234,
-        177,
-        227,
-        4,
-        10,
-        67
+        131,
+        248,
+        61,
+        211,
+        152,
+        205,
+        122,
+        238
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "docs": [
+            "Payer: The account that pays for the creation of the associated token account"
+          ],
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "user_token_account",
+          "writable": true
+        },
+        {
+          "name": "authority"
+        },
+        {
+          "name": "mint",
+          "docs": [
+            "Mint: The token mint for which the associated token account is being created"
+          ]
+        },
+        {
+          "name": "token_program",
+          "docs": [
+            "Token Program: The Token-2022 Program"
+          ],
+          "address": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
+        },
+        {
+          "name": "associated_token_program",
+          "docs": [
+            "Associated Token Program: The Associated Token Account Program"
+          ],
+          "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
+        },
+        {
+          "name": "system_program",
+          "docs": [
+            "System Program: The Solana System Program"
+          ],
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "mint_dumbs_for_win",
+      "discriminator": [
+        235,
+        72,
+        121,
+        68,
+        246,
+        96,
+        150,
+        65
       ],
       "accounts": [
         {
           "name": "authority",
           "writable": true,
-          "signer": true,
-          "relations": [
-            "betting_state"
-          ]
+          "signer": true
         },
         {
-          "name": "bet_vault",
+          "name": "user_betting_account",
           "writable": true,
           "pda": {
             "seeds": [
               {
                 "kind": "const",
                 "value": [
+                  117,
+                  115,
+                  101,
+                  114,
+                  45,
                   98,
                   101,
                   116,
-                  95,
-                  118,
+                  45,
                   97,
-                  117,
-                  108,
-                  116
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "betting_state"
-              }
-            ]
-          }
-        },
-        {
-          "name": "sol_vault",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  115,
+                  99,
+                  99,
                   111,
-                  108,
+                  117,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "bettor"
+              }
+            ]
+          }
+        },
+        {
+          "name": "bettor"
+        },
+        {
+          "name": "user_dumbs_account",
+          "writable": true
+        },
+        {
+          "name": "rapr_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  97,
+                  112,
+                  114,
                   95,
                   118,
                   97,
@@ -1414,123 +1383,6 @@
                 ]
               }
             ]
-          }
-        },
-        {
-          "name": "bet",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  98,
-                  101,
-                  116
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "bet.bettor",
-                "account": "Bet"
-              },
-              {
-                "kind": "account",
-                "path": "bet.fight_id",
-                "account": "Bet"
-              }
-            ]
-          }
-        },
-        {
-          "name": "bettor_dumbs_account",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "account",
-                "path": "bet.bettor",
-                "account": "Bet"
-              },
-              {
-                "kind": "const",
-                "value": [
-                  6,
-                  221,
-                  246,
-                  225,
-                  215,
-                  101,
-                  161,
-                  147,
-                  217,
-                  203,
-                  225,
-                  70,
-                  206,
-                  235,
-                  121,
-                  172,
-                  28,
-                  180,
-                  133,
-                  237,
-                  95,
-                  91,
-                  55,
-                  145,
-                  58,
-                  140,
-                  245,
-                  133,
-                  126,
-                  255,
-                  0,
-                  169
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "dumbs_mint"
-              }
-            ],
-            "program": {
-              "kind": "const",
-              "value": [
-                140,
-                151,
-                37,
-                143,
-                78,
-                36,
-                137,
-                241,
-                187,
-                61,
-                16,
-                41,
-                20,
-                142,
-                13,
-                131,
-                11,
-                90,
-                19,
-                153,
-                218,
-                255,
-                16,
-                132,
-                4,
-                142,
-                123,
-                216,
-                219,
-                233,
-                248,
-                89
-              ]
-            }
           }
         },
         {
@@ -1578,6 +1430,130 @@
                   116,
                   101
                 ]
+              },
+              {
+                "kind": "account",
+                "path": "authority"
+              }
+            ]
+          }
+        },
+        {
+          "name": "token2022_program",
+          "address": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "secure_fight_id",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "place_bet",
+      "discriminator": [
+        222,
+        62,
+        67,
+        220,
+        63,
+        166,
+        126,
+        33
+      ],
+      "accounts": [
+        {
+          "name": "bettor",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "user_betting_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  117,
+                  115,
+                  101,
+                  114,
+                  45,
+                  98,
+                  101,
+                  116,
+                  45,
+                  97,
+                  99,
+                  99,
+                  111,
+                  117,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "bettor"
+              }
+            ]
+          }
+        },
+        {
+          "name": "user_dumbs_account",
+          "writable": true
+        },
+        {
+          "name": "user_rapr_account",
+          "writable": true
+        },
+        {
+          "name": "bet_vault_dumbs",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  101,
+                  116,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "bet_vault_rapr",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  97,
+                  112,
+                  114,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
               }
             ]
           }
@@ -1604,15 +1580,175 @@
           }
         },
         {
+          "name": "betting_state",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  101,
+                  116,
+                  116,
+                  105,
+                  110,
+                  103,
+                  95,
+                  115,
+                  116,
+                  97,
+                  116,
+                  101
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "dumbs_mint"
+        },
+        {
           "name": "token_program",
-          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+          "address": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
         },
         {
           "name": "system_program",
           "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
         },
         {
-          "name": "dumbs_treasury",
+          "name": "fight_id",
+          "type": "u64"
+        },
+        {
+          "name": "odds",
+          "type": "u64"
+        },
+        {
+          "name": "token_type",
+          "type": {
+            "defined": {
+              "name": "TokenType"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "settle_bet",
+      "discriminator": [
+        115,
+        55,
+        234,
+        177,
+        227,
+        4,
+        10,
+        67
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "user_betting_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  117,
+                  115,
+                  101,
+                  114,
+                  45,
+                  98,
+                  101,
+                  116,
+                  45,
+                  97,
+                  99,
+                  99,
+                  111,
+                  117,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "bettor"
+              }
+            ]
+          }
+        },
+        {
+          "name": "bettor"
+        },
+        {
+          "name": "user_dumbs_account",
+          "writable": true
+        },
+        {
+          "name": "user_rapr_account",
+          "writable": true
+        },
+        {
+          "name": "bet_vault_dumbs",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  101,
+                  116,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "bet_vault_rapr",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  97,
+                  112,
+                  114,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "dumbs_mint",
           "writable": true,
           "pda": {
             "seeds": [
@@ -1625,6 +1761,23 @@
                   98,
                   115,
                   95,
+                  109,
+                  105,
+                  110,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "treasury",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
                   116,
                   114,
                   101,
@@ -1636,97 +1789,44 @@
                 ]
               }
             ]
-          }
+          },
+          "relations": [
+            "betting_state"
+          ]
         },
         {
-          "name": "treasury_dumbs_account",
+          "name": "betting_state",
           "writable": true,
           "pda": {
             "seeds": [
               {
-                "kind": "account",
-                "path": "dumbs_treasury"
-              },
-              {
                 "kind": "const",
                 "value": [
-                  6,
-                  221,
-                  246,
-                  225,
-                  215,
+                  98,
                   101,
-                  161,
-                  147,
-                  217,
-                  203,
-                  225,
-                  70,
-                  206,
-                  235,
-                  121,
-                  172,
-                  28,
-                  180,
-                  133,
-                  237,
+                  116,
+                  116,
+                  105,
+                  110,
+                  103,
                   95,
-                  91,
-                  55,
-                  145,
-                  58,
-                  140,
-                  245,
-                  133,
-                  126,
-                  255,
-                  0,
-                  169
+                  115,
+                  116,
+                  97,
+                  116,
+                  101
                 ]
-              },
-              {
-                "kind": "account",
-                "path": "dumbs_mint"
               }
-            ],
-            "program": {
-              "kind": "const",
-              "value": [
-                140,
-                151,
-                37,
-                143,
-                78,
-                36,
-                137,
-                241,
-                187,
-                61,
-                16,
-                41,
-                20,
-                142,
-                13,
-                131,
-                11,
-                90,
-                19,
-                153,
-                218,
-                255,
-                16,
-                132,
-                4,
-                142,
-                123,
-                216,
-                219,
-                233,
-                248,
-                89
-              ]
-            }
+            ]
           }
+        },
+        {
+          "name": "token_program",
+          "address": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
         }
       ],
       "args": [
@@ -1741,16 +1841,16 @@
       ]
     },
     {
-      "name": "user_initialize",
+      "name": "swap_sol_for_rapr",
       "discriminator": [
-        223,
-        157,
-        253,
-        44,
-        62,
-        158,
-        83,
-        137
+        152,
+        86,
+        30,
+        139,
+        144,
+        185,
+        211,
+        126
       ],
       "accounts": [
         {
@@ -1759,61 +1859,7 @@
           "signer": true
         },
         {
-          "name": "user_account",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  117,
-                  115,
-                  101,
-                  114,
-                  95,
-                  97,
-                  99,
-                  99,
-                  111,
-                  117,
-                  110,
-                  116
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "user"
-              }
-            ]
-          }
-        },
-        {
-          "name": "system_program",
-          "address": "11111111111111111111111111111111"
-        }
-      ],
-      "args": []
-    },
-    {
-      "name": "withdraw_sol",
-      "discriminator": [
-        145,
-        131,
-        74,
-        136,
-        65,
-        137,
-        42,
-        38
-      ],
-      "accounts": [
-        {
-          "name": "user",
-          "writable": true,
-          "signer": true
-        },
-        {
-          "name": "user_account",
+          "name": "user_rapr_account",
           "writable": true
         },
         {
@@ -1839,6 +1885,9 @@
           }
         },
         {
+          "name": "rapr_mint"
+        },
+        {
           "name": "betting_state",
           "writable": true,
           "pda": {
@@ -1865,142 +1914,8 @@
           }
         },
         {
-          "name": "treasury",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  116,
-                  114,
-                  101,
-                  97,
-                  115,
-                  117,
-                  114,
-                  121
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "name": "user_dumbs_account",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "account",
-                "path": "user"
-              },
-              {
-                "kind": "const",
-                "value": [
-                  6,
-                  221,
-                  246,
-                  225,
-                  215,
-                  101,
-                  161,
-                  147,
-                  217,
-                  203,
-                  225,
-                  70,
-                  206,
-                  235,
-                  121,
-                  172,
-                  28,
-                  180,
-                  133,
-                  237,
-                  95,
-                  91,
-                  55,
-                  145,
-                  58,
-                  140,
-                  245,
-                  133,
-                  126,
-                  255,
-                  0,
-                  169
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "dumbs_mint"
-              }
-            ],
-            "program": {
-              "kind": "const",
-              "value": [
-                140,
-                151,
-                37,
-                143,
-                78,
-                36,
-                137,
-                241,
-                187,
-                61,
-                16,
-                41,
-                20,
-                142,
-                13,
-                131,
-                11,
-                90,
-                19,
-                153,
-                218,
-                255,
-                16,
-                132,
-                4,
-                142,
-                123,
-                216,
-                219,
-                233,
-                248,
-                89
-              ]
-            }
-          }
-        },
-        {
-          "name": "dumbs_mint",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  100,
-                  117,
-                  109,
-                  98,
-                  115,
-                  95,
-                  109,
-                  105,
-                  110,
-                  116
-                ]
-              }
-            ]
-          }
-        },
-        {
           "name": "token_program",
-          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+          "address": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
         },
         {
           "name": "system_program",
@@ -2009,26 +1924,13 @@
       ],
       "args": [
         {
-          "name": "amount",
+          "name": "sol_amount",
           "type": "u64"
         }
       ]
     }
   ],
   "accounts": [
-    {
-      "name": "Bet",
-      "discriminator": [
-        147,
-        23,
-        35,
-        59,
-        15,
-        75,
-        155,
-        32
-      ]
-    },
     {
       "name": "BettingState",
       "discriminator": [
@@ -2040,19 +1942,6 @@
         110,
         243,
         199
-      ]
-    },
-    {
-      "name": "DumbsTreasury",
-      "discriminator": [
-        227,
-        114,
-        68,
-        4,
-        67,
-        195,
-        173,
-        3
       ]
     },
     {
@@ -2082,104 +1971,189 @@
       ]
     },
     {
-      "name": "UserAccount",
+      "name": "UserBettingAccount",
       "discriminator": [
-        211,
-        33,
-        136,
-        16,
-        186,
-        110,
-        242,
-        127
+        46,
+        87,
+        148,
+        203,
+        17,
+        241,
+        49,
+        32
       ]
     }
   ],
   "errors": [
     {
       "code": 6000,
-      "name": "DepositTooSmall",
-      "msg": "Deposit amount is too small"
+      "name": "Unauthorized",
+      "msg": "Unauthorized access"
     },
     {
       "code": 6001,
-      "name": "BetTooLarge",
-      "msg": "Bet amount is too large"
+      "name": "AccountAlreadyInitialized",
+      "msg": "Account Already Initialized"
     },
     {
       "code": 6002,
-      "name": "InsufficientFunds",
-      "msg": "Insufficient funds"
+      "name": "NotInitialized",
+      "msg": "Not Initialized"
     },
     {
       "code": 6003,
-      "name": "ExceedsLiquidityLimit",
-      "msg": "Exceeds liquidity limit"
+      "name": "InvalidAccountData",
+      "msg": "Invalid account data"
     },
     {
       "code": 6004,
-      "name": "BetAlreadySettled",
-      "msg": "Bet is already settled"
+      "name": "CalculationOverflow",
+      "msg": "Calculation overflow occurred"
     },
     {
       "code": 6005,
+      "name": "InvalidAccount",
+      "msg": "Invalid account provided"
+    },
+    {
+      "code": 6006,
+      "name": "InvalidBettor",
+      "msg": "Invalid bettor"
+    },
+    {
+      "code": 6007,
+      "name": "BetAlreadyPlaced",
+      "msg": "Bet Already Placed"
+    },
+    {
+      "code": 6008,
+      "name": "BetAlreadySettled",
+      "msg": "Bet already settled"
+    },
+    {
+      "code": 6009,
+      "name": "BetNotSettled",
+      "msg": "Bet not settled yet"
+    },
+    {
+      "code": 6010,
+      "name": "BetNotFound",
+      "msg": "Bet not found"
+    },
+    {
+      "code": 6011,
       "name": "InvalidFightId",
       "msg": "Invalid fight ID"
     },
     {
-      "code": 6006,
-      "name": "Unauthorized",
-      "msg": "Unauthorized"
-    },
-    {
-      "code": 6007,
-      "name": "InsufficientTreasuryFunds",
-      "msg": "Insufficient funds in the treasury"
-    },
-    {
-      "code": 6008,
-      "name": "InsufficientSolVaultFunds",
-      "msg": "Insufficient funds in the SOL vault"
-    },
-    {
-      "code": 6009,
-      "name": "InvalidTransferAmount",
-      "msg": "Invalid transfer amount"
-    },
-    {
-      "code": 6010,
-      "name": "TreasuryBalanceBelowMinimum",
-      "msg": "Treasury balance below minimum required"
-    },
-    {
-      "code": 6011,
-      "name": "InvalidBetState",
-      "msg": "Invalid bet state"
-    },
-    {
       "code": 6012,
-      "name": "InvalidOdds",
-      "msg": "Invalid odds"
+      "name": "InsufficientBalance",
+      "msg": "Insufficient balance"
     },
     {
       "code": 6013,
-      "name": "InvalidAuthority",
-      "msg": "Invalid authority"
+      "name": "SwapAmountTooLow",
+      "msg": "Swap amount too low"
     },
     {
       "code": 6014,
-      "name": "CalculationOverflow",
-      "msg": "Calculation overflow"
+      "name": "SwapAmountTooHigh",
+      "msg": "Swap amount too high"
     },
     {
       "code": 6015,
-      "name": "InvalidAccount",
-      "msg": "Invalid account"
+      "name": "NoRaprToStake",
+      "msg": "No RAPR tokens to stake"
     },
     {
       "code": 6016,
-      "name": "BetNotSettled",
-      "msg": "Bet not settled"
+      "name": "InvalidRaprMultiplier",
+      "msg": "Invalid RAPR Multiplier"
+    },
+    {
+      "code": 6017,
+      "name": "InsufficientFunds",
+      "msg": "Insufficient funds"
+    },
+    {
+      "code": 6018,
+      "name": "BetTooLarge",
+      "msg": "Bet is to large"
+    },
+    {
+      "code": 6019,
+      "name": "InvalidAmount",
+      "msg": "Invalid Amount"
+    },
+    {
+      "code": 6020,
+      "name": "InvalidOwner",
+      "msg": "Invalid Owner"
+    },
+    {
+      "code": 6021,
+      "name": "InvalidTreasury",
+      "msg": "Invalid Treasury"
+    },
+    {
+      "code": 6022,
+      "name": "ProgramPaused",
+      "msg": "Program is Paused"
+    },
+    {
+      "code": 6023,
+      "name": "InvalidProgramId",
+      "msg": "Invalid Program ID"
+    },
+    {
+      "code": 6024,
+      "name": "InvalidAssociatedTokenAccount",
+      "msg": "Invalid Associated Token Account"
+    },
+    {
+      "code": 6025,
+      "name": "MissingAccountBump",
+      "msg": "Missing Account Bump"
+    },
+    {
+      "code": 6026,
+      "name": "DepositAmountTooLow",
+      "msg": "Deposit amount is too low"
+    },
+    {
+      "code": 6027,
+      "name": "DepositAmountTooHigh",
+      "msg": "Deposit amount is too high"
+    },
+    {
+      "code": 6028,
+      "name": "InvalidOdds",
+      "msg": "Invalid Odds"
+    },
+    {
+      "code": 6029,
+      "name": "InsufficientSolBalance",
+      "msg": "Insufficient SOL Balance"
+    },
+    {
+      "code": 6030,
+      "name": "AmountTooSmall",
+      "msg": "Amount is too small"
+    },
+    {
+      "code": 6031,
+      "name": "AmountTooLarge",
+      "msg": "Amount is too large"
+    },
+    {
+      "code": 6032,
+      "name": "InvalidTokenType",
+      "msg": "Invalid Token Type"
+    },
+    {
+      "code": 6033,
+      "name": "InvalidMint",
+      "msg": "Invalid Mint"
     }
   ],
   "types": [
@@ -2193,16 +2167,32 @@
             "type": "pubkey"
           },
           {
+            "name": "token_type",
+            "type": {
+              "defined": {
+                "name": "TokenType"
+              }
+            }
+          },
+          {
             "name": "amount",
-            "type": "u64"
+            "type": "u32"
           },
           {
             "name": "fight_id",
-            "type": "u64"
+            "type": "u32"
           },
           {
             "name": "odds",
-            "type": "u64"
+            "type": "u16"
+          },
+          {
+            "name": "potential_payout",
+            "type": "u32"
+          },
+          {
+            "name": "fee_amount",
+            "type": "u32"
           },
           {
             "name": "timestamp",
@@ -2211,6 +2201,26 @@
           {
             "name": "settled",
             "type": "bool"
+          },
+          {
+            "name": "won",
+            "type": "bool"
+          },
+          {
+            "name": "settlement_timestamp",
+            "type": "i64"
+          },
+          {
+            "name": "actual_payout",
+            "type": "u32"
+          },
+          {
+            "name": "rapr_multiplier",
+            "type": "u16"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
           }
         ]
       }
@@ -2225,11 +2235,11 @@
             "type": "pubkey"
           },
           {
-            "name": "sol_vault",
+            "name": "dumbs_mint",
             "type": "pubkey"
           },
           {
-            "name": "dumbs_mint",
+            "name": "rapr_mint",
             "type": "pubkey"
           },
           {
@@ -2237,35 +2247,63 @@
             "type": "pubkey"
           },
           {
+            "name": "rapr_vault",
+            "type": "pubkey"
+          },
+          {
             "name": "treasury",
             "type": "pubkey"
           },
           {
-            "name": "exchange_rate",
-            "type": "u64"
-          },
-          {
-            "name": "min_deposit",
-            "type": "u64"
-          },
-          {
-            "name": "max_bet",
-            "type": "u64"
+            "name": "sol_vault",
+            "type": "pubkey"
           },
           {
             "name": "house_fee",
+            "type": "u32"
+          },
+          {
+            "name": "rapr_multiplier",
             "type": "u64"
           },
           {
-            "name": "deposit_fee",
+            "name": "sol_dumbs_rate",
             "type": "u64"
           },
           {
-            "name": "cashout_fee",
+            "name": "sol_rapr_rate",
             "type": "u64"
           },
           {
-            "name": "total_sol_reserve",
+            "name": "total_bets_placed",
+            "type": "u64"
+          },
+          {
+            "name": "total_bets_settled",
+            "type": "u64"
+          },
+          {
+            "name": "total_dumbs_wagered",
+            "type": "u64"
+          },
+          {
+            "name": "total_rapr_wagered",
+            "type": "u64"
+          },
+          {
+            "name": "total_dumbs_won",
+            "type": "u64"
+          },
+          {
+            "name": "total_rapr_won",
+            "type": "u64"
+          },
+          {
+            "name": "total_fees_collected",
+            "type": "u64"
+          },
+          {
+            "name": "total_potential_payout",
             "type": "u64"
           },
           {
@@ -2273,39 +2311,7 @@
             "type": "u64"
           },
           {
-            "name": "total_potential_payout",
-            "type": "u64"
-          }
-        ]
-      }
-    },
-    {
-      "name": "DumbsTreasury",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "treasury_account",
-            "type": "pubkey"
-          },
-          {
-            "name": "total_collected",
-            "type": "u64"
-          }
-        ]
-      }
-    },
-    {
-      "name": "InitializeParams",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "exchange_rate",
-            "type": "u64"
-          },
-          {
-            "name": "min_deposit",
+            "name": "total_rapr_in_circulation",
             "type": "u64"
           },
           {
@@ -2313,16 +2319,20 @@
             "type": "u64"
           },
           {
-            "name": "house_fee",
-            "type": "u64"
+            "name": "is_paused",
+            "type": "bool"
           },
           {
-            "name": "deposit_fee",
-            "type": "u64"
+            "name": "bump",
+            "type": "u8"
           },
           {
-            "name": "cashout_fee",
-            "type": "u64"
+            "name": "bet_vault_bump",
+            "type": "u8"
+          },
+          {
+            "name": "rapr_vault_bump",
+            "type": "u8"
           }
         ]
       }
@@ -2333,12 +2343,50 @@
         "kind": "struct",
         "fields": [
           {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
             "name": "balance",
             "type": "u64"
           },
           {
-            "name": "authority",
-            "type": "pubkey"
+            "name": "total_deposits",
+            "type": "u64"
+          },
+          {
+            "name": "total_sol_received",
+            "type": "u64"
+          },
+          {
+            "name": "total_dumbs_minted",
+            "type": "u64"
+          },
+          {
+            "name": "min_deposit_amount",
+            "type": "u64"
+          },
+          {
+            "name": "max_deposit_amount",
+            "type": "u64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "TokenType",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "DUMBS"
+          },
+          {
+            "name": "RAPR"
           }
         ]
       }
@@ -2353,44 +2401,82 @@
             "type": "pubkey"
           },
           {
-            "name": "total_collected",
+            "name": "sol_fees_collected",
             "type": "u64"
           },
           {
-            "name": "total_paid_out",
+            "name": "dumbs_fees_collected",
             "type": "u64"
           },
           {
-            "name": "house_edge_collected",
+            "name": "rapr_fees_collected",
             "type": "u64"
           },
           {
-            "name": "bet_fees_collected",
+            "name": "total_fees_collected",
             "type": "u64"
           },
           {
-            "name": "last_payout_timestamp",
+            "name": "total_house_edge",
+            "type": "u32"
+          },
+          {
+            "name": "total_withdrawals",
+            "type": "u64"
+          },
+          {
+            "name": "last_withdrawal_timestamp",
             "type": "i64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
           }
         ]
       }
     },
     {
-      "name": "UserAccount",
+      "name": "UserBettingAccount",
       "type": {
         "kind": "struct",
         "fields": [
           {
-            "name": "authority",
+            "name": "owner",
             "type": "pubkey"
           },
           {
-            "name": "sol_balance",
+            "name": "active_bet",
+            "type": {
+              "option": {
+                "defined": {
+                  "name": "Bet"
+                }
+              }
+            }
+          },
+          {
+            "name": "total_bets_placed",
             "type": "u64"
           },
           {
-            "name": "dumbs_balance",
+            "name": "total_dumbs_wagered",
             "type": "u64"
+          },
+          {
+            "name": "total_rapr_wagered",
+            "type": "u64"
+          },
+          {
+            "name": "total_winnings",
+            "type": "u64"
+          },
+          {
+            "name": "last_bet_timestamp",
+            "type": "i64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
           }
         ]
       }

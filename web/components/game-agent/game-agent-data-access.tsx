@@ -1,6 +1,6 @@
 'use client';
 
-import { getNftGameAgentProgram } from '@casino-of-life-dashboard/anchor';
+import { getNftGameAgentProgram, NFT_GAME_AGENT_PROGRAM_ID } from '@casino-of-life-dashboard/anchor';
 import { PublicKey, Keypair, Transaction, SystemProgram, SYSVAR_RENT_PUBKEY } from '@solana/web3.js';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { 
@@ -12,18 +12,17 @@ import {
   type Provider 
 } from '@reown/appkit-adapter-solana/react';
 import toast from 'react-hot-toast';
-import { useCluster } from '../cluster/cluster-data-access';
 import { useTransactionToast } from '../ui/ui-layout';
 import { AnchorProvider } from '@coral-xyz/anchor';
+import { solana } from '@reown/appkit/networks';
 
 const TOKEN_METADATA_PROGRAM_ID = new PublicKey('metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s');
-const PROGRAM_ID = new PublicKey('7SKb68VU9C8Pmjip67q7xDjqnLekaUUNA7gM8AB5MDxN');
+const PROGRAM_ID = NFT_GAME_AGENT_PROGRAM_ID
 
 export function useNftGameAgentProgram() {
   const { address, isConnected } = useAppKitAccount();
   const { connection } = useAppKitConnection();
   const { walletProvider } = useAppKitProvider<Provider>('solana');
-  const { cluster } = useCluster();
   const transactionToast = useTransactionToast();
   const queryClient = useQueryClient();
 
@@ -53,8 +52,8 @@ export function useNftGameAgentProgram() {
   const provider = getProvider();
   const program = provider ? getNftGameAgentProgram(provider) : null;
 
-  const getProgramAccount = useQuery({
-    queryKey: ['get-nft-game-agent-program-account', { cluster }],
+  const getProgramAccount = ({
+    queryKey: ['get-nft-game-agent-program-account', { solana }],
     queryFn: async () => {
       const accountInfo = await connection.getParsedAccountInfo(PROGRAM_ID);
       if (!accountInfo.value) {

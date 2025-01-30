@@ -5,7 +5,7 @@
  * IDL can be found at `target/idl/nft_game_agent_program.json`.
  */
 export type NftGameAgentProgram = {
-  "address": "7SKb68VU9C8Pmjip67q7xDjqnLekaUUNA7gM8AB5MDxN",
+  "address": "2HuYN4A2wYEiTpP7tdx4rKKcLPauwDwwchjxgMkM3gJ3",
   "metadata": {
     "name": "nftGameAgentProgram",
     "version": "0.1.0",

@@ -1,24 +1,24 @@
 [toolchain]
 anchor_version = "0.30.1"
-solana_version = "1.18.18"
+solana_version = "2.0.23"
 
 [features]
 resolution = true
 skip-lint = false
 
 [programs.devnet]
-betting_program = "5FwvYgAChMwMsBrmSKBBZeWRGX27p62G3o3UsBQjhVJZ"
-nft_game_agent_program = "7SKb68VU9C8Pmjip67q7xDjqnLekaUUNA7gM8AB5MDxN"
-freedumbs_controller_program = "FreeD5yGkRZsVu8RYkeFhPNpVX3ea3T6baqWzAs4zqRj"
+betting_program = "GYLtHxFn26XJr9fcHgC28r2mPR64sUQqVu3EMfQ4FzER"
+nft_game_agent_program = "2HuYN4A2wYEiTpP7tdx4rKKcLPauwDwwchjxgMkM3gJ3"
+
 [registry]
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "Devnet"
+cluster = "devnet"
 wallet = "~/.config/solana/new_program_keypair.json"
 
 [workspace]
-members = ["programs/nft_game_agent_program", "programs/betting_program", "programs/freedumbs_controller_program"]
+members = ["programs/betting_program", "programs/nft_game_agent_program"]
 
 [scripts]
 test = "npm run test:mocha"
