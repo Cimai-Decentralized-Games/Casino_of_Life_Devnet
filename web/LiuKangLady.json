@@ -1,0 +1,36 @@
+{
+    "name": "LiuKangLady",
+    "description": "Trained AI model for the Casino of Life game agent",
+    "version": "1.0.0",
+    "created_at": "2023-04-15T12:00:00Z",
+    "model_type": "neural_network",
+    "architecture": {
+      "type": "transformer",
+      "layers": 12,
+      "hidden_size": 768,
+      "attention_heads": 12
+    },
+    "training": {
+      "method": "supervised_learning",
+      "dataset": "casino_of_life_gameplay_data",
+      "dataset_size": 1000000,
+      "epochs": 100,
+      "batch_size": 32,
+      "optimizer": "Adam",
+      "learning_rate": 0.001
+    },
+    "performance": {
+      "accuracy": 0.95,
+      "loss": 0.02,
+      "f1_score": 0.94
+    },
+    "input_format": {
+      "type": "game_state_vector",
+      "dimensions": [1, 256]
+    },
+    "output_format": {
+      "type": "action_probabilities",
+      "dimensions": [1, 10]
+    },
+    "hash": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef"
+  }

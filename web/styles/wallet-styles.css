@@ -1,0 +1,54 @@
+/* web/styles/wallet-styles.css */
+
+/* General card styles */
+wui-card {
+    background-color: #cb5317 !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    color: white !important;
+    font-family: Inter, sans-serif !important;
+  }
+  
+  /* Styles for all buttons within the wallet */
+  appkit-button {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    background-color: #0b0705 !important;
+    border-radius: 8px !important;
+    color: white !important;
+    font-family: Inter, sans-serif !important;
+    font-weight: bold !important;
+    padding: 10px 20px !important;
+    transition: all 0.3s ease-in-out !important;
+    border: none !important; /* Remove default borders */
+  }
+  
+  appkit-button:hover {
+    background-color: #120e0b !important;
+    color: #e17c10 !important;
+    transform: scale(1.05) !important;
+  }
+  
+  /* Add other specific styles as needed, e.g., for input fields, dropdowns, etc. */
+  
+  /* Example: Styling for text inputs */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"] {
+    background-color: #243225 !important;
+    color: white !important;
+    border: 1px solid #4A5568 !important;
+    border-radius: 4px !important;
+    padding: 8px !important;
+  }
+  
+  
+  /* Example: Styling for Select dropdowns */
+  select {
+    background-color: #2D3748 !important;
+    color: white !important;
+    border: 1px solid #4A5568 !important;
+    border-radius: 4px !important;
+    padding: 8px !important;
+  }

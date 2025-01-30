@@ -1,0 +1,85 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated/chat-client"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("CHAT_DATABASE_URL")
+}
+
+model Account {
+  id        String   @id @default(uuid())
+  name      String
+  username  String   @unique
+  email     String?
+  avatarUrl String?
+  details   Json?
+  createdAt DateTime @default(now())
+}
+
+model Memory {
+  id        String   @id @default(uuid())
+  content   Json
+  userId    String
+  roomId    String
+  agentId   String
+  tableName String
+  createdAt DateTime @default(now())
+  embedding Json?    // For vector embeddings
+
+  @@index([roomId])
+  @@index([userId])
+  @@index([agentId])
+  @@index([tableName])
+}
+
+model Room {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+}
+
+model Participant {
+  id       String  @id @default(uuid())
+  userId   String
+  roomId   String
+  state    String? // "FOLLOWED" | "MUTED" | null
+
+  @@unique([userId, roomId])
+  @@index([roomId])
+}
+
+model Goal {
+  id        String   @id @default(uuid())
+  agentId   String
+  roomId    String
+  userId    String?
+  status    String   // GoalStatus enum
+  content   Json
+  createdAt DateTime @default(now())
+
+  @@index([roomId])
+  @@index([agentId])
+}
+
+model Relationship {
+  id        String   @id @default(uuid())
+  userA     String
+  userB     String
+  status    String
+  createdAt DateTime @default(now())
+
+  @@unique([userA, userB])
+}
+
+model ChatMessage {
+  id        String   @id @default(uuid())
+  user      String
+  text      String
+  timestamp DateTime @default(now())
+  fightId   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([timestamp])
+}
